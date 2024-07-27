@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+    <title>E-Commerce Shop</title>
+    <style>
+        .table-grey {
+            background-color: #f8f9fa; /* Light grey background */
+        }
+        .table-grey thead {
+            background-color: #e9ecef; /* Slightly darker grey for the header */
+        }
+        .table-grey tbody tr {
+            background-color: #f8f9fa; /* Ensuring all rows have the light grey background */
+        }
+        .table-grey tbody tr:hover {
+            background-color: #f1f2f4; /* Slightly darker grey on hover */
+        }
+		.d-flex {
+		    display: flex;
+		    align-items: center;
+		}
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/VITproject/admin}" href="#">
+            <h3 class="d-inline-block align-top">E-commerce Shop</h3>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto"></ul>
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/VITproject/admin}" href="#">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/VITproject/logout}" href="#">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+	<div class="d-flex">
+	    <a th:href="@{/VITproject/admin/categories/add}" style="margin: 30px 0" class="btn btn-primary">Add Category</a> 
+		<p th:text="${response_message}" style="color: green; margin-left: 30px; font-size: 1.25em;"><!----></p>
+	</div>
+	<!-- if categories are empty -->
+    <div th:if="${#lists.isEmpty(categories)}" class="alert alert-warning" role="alert">
+        No categories available.
+    </div>
+    <!-- if categories are not empty -->
+    <table class="table table-grey" th:if="${!#lists.isEmpty(categories)}">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Category Number</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">Delete category</th>
+            <th scope="col">Update category</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- loops all the categories received -->
+        <tr th:each="category, iStat : ${categories}">
+            <!-- iStat: iteration status variable -->
+            <th scope="row" th:text="${iStat.index + 1}"><!----></th>
+            <!-- iStat.index starts from 0 -->
+            <td th:text="${category.name}"></td>
+			<!--By default, clicking an <a> tag sends a GET request to the server, retrieving information from the linked URL.-->
+            <td><a href="" th:href="@{/VITproject/admin/categories/delete/{id}(id=${category.id})}" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">Delete</a></td>
+			<td><a href="" th:href="@{/VITproject/admin/categories/update/{id}(id=${category.id})}" class="btn btn-warning">Update</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal (pop-up)-->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete this category?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a id="confirmDelete" href="#" class="btn btn-danger">Yes, Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script>
+    $('#cancelModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var href = button.attr('href');
+        var modal = $(this);
+        modal.find('#confirmDelete').attr('href', href);
+    });
+</script>
+</body>
+</html>
