@@ -53,7 +53,7 @@
 </nav>
 <div class="container scrollable-content" style="margin: 30px 0 margin-left: 30px 0">
     <h3>Add a new Product</h3>
-    <form th:action="@{/VITproject/admin/products/add}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
+    <form th:action="@{/VITproject/admin/products/add}" method="post" th:object="${productDto}" enctype="multipart/form-data">
         <div class="row">
             <div class="col-sm-6">
 
@@ -66,10 +66,7 @@
                 <div class="form-group">
                     <label for="category">Select Category</label>
                     <select class="form-control" th:field="*{categoryId}" id="category" name="category">
-                        <option th:each="category :${categories}"
-                                th:value="${category.id}"
-                                th:text="${category.name}">
-                        </option>
+                        <option th:each="category :${categories}" th:value="${category.id}" th:text="${category.name}"></option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -91,13 +88,13 @@
                 <div class="form-group">
                     <label for="productImage">Product Image</label>
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" name="productImage" accept="image/jpeg, image/png" id="productImage"/>
+                        <input type="file" class="custom-file-input" name="productImage" accept="image/jpeg, image/png, image/jpg" id="productImage"/>
                         <label class="custom-file-label" for="productImage">Choose file</label>
                     </div>
                     <div class="mt-3">
-                        <img src="#" id="imgPreview" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" alt="Product Image Preview">
+                        <img src="#" id="imgPreview" height="100px" width="100px" th:src="@{${'/productImages/' + productDto.imageName}}" alt="Product Image Preview">
                     </div>
-                    <input type="hidden" name="imgName" th:value="${productDTO.imageName}">
+                    <input type="hidden" name="imgName" th:value="${productDto.imageName}">
                 </div>
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary">Submit</button>

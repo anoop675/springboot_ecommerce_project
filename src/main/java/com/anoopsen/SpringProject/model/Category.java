@@ -14,7 +14,7 @@ public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "category_id",
-			length = 200,
+			/*length = 200,*/
 			unique = true
 			)
 	private int id;
