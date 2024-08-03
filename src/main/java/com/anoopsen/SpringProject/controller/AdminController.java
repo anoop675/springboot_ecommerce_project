@@ -62,7 +62,7 @@ public class AdminController {
         /*
          	The form itself, will bind the data for each attribute in the empty Category object 
          */
-        model.addAttribute("message", "Enter new category to be added");
+        model.addAttribute("message", "Add new category");
         return "categoriesAdd";
     }
 	
@@ -86,7 +86,7 @@ public class AdminController {
 	public String updateCategory(@PathVariable int id, Model model) { //extract 'id' value from the URI path, 
 		Optional<Category> category = category_service.getCategoryById(id);
 		if(category.isPresent()) {
-			model.addAttribute("message", "Enter the updated category");
+			model.addAttribute("message", "Update category");
 			model.addAttribute("category", category.get());
 
 			return "categoriesAdd";
@@ -110,6 +110,8 @@ public class AdminController {
 	public String getProductAdd(Model model) {
 		ProductDto productDto = new ProductDto();
 		List<Category> categories = category_service.getAllCategory();
+		
+		model.addAttribute("message", "Add new product");
 		model.addAttribute("productDto", productDto);
 		model.addAttribute("categories", categories);
 		
@@ -136,5 +138,25 @@ public class AdminController {
 		redirectAttributes.addAttribute("response_message", "Product added/updated successfully!");
 		
 		return "redirect:/VITproject/admin/products";
+	}
+	
+	@GetMapping(value="/admin/products/delete/{id}")
+	public String deleteProduct(@PathVariable int id, RedirectAttributes redirectAttributes) { 
+		product_service.removeProductById(id);
+	    redirectAttributes.addFlashAttribute("response_message", "Product deleted successfully!"); 
+
+		return "redirect:/VITproject/admin/products";
+	}
+	
+	@GetMapping(value="/admin/products/update/{id}")
+	public String updateProduct(@PathVariable("id") int id, Model model) {
+		ProductDto productDto = product_service.getProductById(id);
+		List<Category> categories = category_service.getAllCategory();
+		
+		model.addAttribute("message", "Update product");
+		model.addAttribute("productDto", productDto);
+		model.addAttribute("categories", categories);
+		
+		return "productAdd";
 	}
 }

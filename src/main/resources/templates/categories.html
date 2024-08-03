@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
     <title>E-Commerce Shop</title>
     <style>
+        .navbar-custom {
+            background-color: #007bff; /* Bootstrap's primary blue color */
+        }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #ffffff;
+        }
         .table-grey {
             background-color: #f8f9fa; /* Light grey background */
         }
@@ -36,7 +43,7 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/VITproject/admin}" href="#">
             <h3 class="d-inline-block align-top">E-commerce Shop</h3>
@@ -67,9 +74,9 @@
     <!--<div th:if="${#lists.isEmpty(categories)}" class="alert alert-warning" role="alert">No categories available.</div>-->
     <!-- if categories are not empty -->
     <div class="table-container">
-		<div class="alert alert-success" id="responseAlert" role="alert" th:text="${response_message}"></div>
+        <div class="alert alert-success" id="responseAlert" role="alert" th:text="${response_message}"></div>
         <!--<table class="table table-grey" th:if="${!#lists.isEmpty(categories)}">-->
-		<table class="table table-grey">
+        <table class="table table-grey">
             <thead class="thead-light">
             <tr>
                 <th scope="col">Category Number</th>
@@ -91,7 +98,7 @@
             </tr>
             </tbody>
         </table>
-		<h3 style="margin-left:400px" th:if="${#lists.isEmpty(categories)}">No categories available</h3>
+        <h3 style="margin-left:400px" th:if="${#lists.isEmpty(categories)}">No categories available</h3>
     </div>
 </div>
 
@@ -108,7 +115,7 @@
             <div class="modal-body">Are you sure you want to delete this category?</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a id="confirmDelete" href="#" class="btn btn-danger">Yes, Delete</a>
+                <a id="confirmDelete" href="#" class="btn btn-primary">Yes</a>
             </div>
         </div>
     </div>
@@ -126,7 +133,7 @@
             alertBox.show();
             setTimeout(function () {
                 alertBox.hide();
-            }, 4000); 
+            }, 3000); 
         }
     });
 

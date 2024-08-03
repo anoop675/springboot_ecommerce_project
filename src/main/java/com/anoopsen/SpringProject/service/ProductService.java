@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ import com.anoopsen.SpringProject.dto.ProductDto;
 import com.anoopsen.SpringProject.model.Product;
 import com.anoopsen.SpringProject.model.Product.ProductBuilder;
 import com.anoopsen.SpringProject.repository.ProductRepo;
+import com.anoopsen.SpringProject.dto.ProductDto.ProductDtoBuilder;
 
 @Service
 public class ProductService {
@@ -55,8 +57,22 @@ public class ProductService {
 		return product_repository.findAll();
 	}
 	
-	public Optional<Product> getProductById(int id){
-		return product_repository.findById(id);
+	public ProductDto getProductById(int id){
+		Product product = product_repository.findById(id).get(); 
+
+		ProductDtoBuilder productDtoBuilder = ProductDto.builder()
+														.id(product.getId())
+														.name(product.getName())
+														.categoryId(product.getCategory().getId())
+														.price(product.getPrice())
+														.weight(product.getWeight())
+														.description(product.getDescription())
+														.imageName(product.getImageName());
+				  
+		
+		
+		ProductDto productDto = productDtoBuilder.build();
+		return productDto;
 	}
 	
 	public List<Product> getAllProductByCategoryId(int id){

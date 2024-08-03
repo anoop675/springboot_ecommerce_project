@@ -9,26 +9,48 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     
     <title>E-Commerce Shop</title>
-	<style>
-		.alert {
-		     display: none; /* Initially hide the alert */
-		     margin-top: -70px; /* Add some space from the top */
-		     position: absolute; /* Make it absolute to place it top-right of the table */
-		     right: 0; /* Align to the right */
-		}
-		.table-container {
-		     position: relative; /* Make the container relative for absolute positioning */
-		}		
-	</style>
+    <style>
+        .navbar-custom {
+            background-color: #007bff; /* Bootstrap's primary blue color */
+        }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #ffffff;
+        }
+        .table-grey {
+            background-color: #f8f9fa; /* Light grey background */
+        }
+        .table-grey thead {
+            background-color: #e9ecef; /* Slightly darker grey for the header */
+        }
+        .table-grey tbody tr {
+            background-color: #f8f9fa; /* Ensuring all rows have the light grey background */
+        }
+        .table-grey tbody tr:hover {
+            background-color: #f1f2f4; /* Slightly darker grey on hover */
+        }
+        .d-flex {
+            display: flex;
+            align-items: center;
+        }
+        .alert {
+            display: none; /* Initially hide the alert */
+            margin-top: -70px; /* Add some space from the top */
+            position: absolute; /* Make it absolute to place it top-right of the table */
+            right: 0; /* Align to the right */
+        }
+        .table-container {
+            position: relative; /* Make the container relative for absolute positioning */
+        }       
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light" >
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
     <div class="container-fluid">
         <a class="navbar-brand" th:href="@{/VITproject/admin}" href="#">
             <!--<img th:src="@{/images/logo.png}"  src="../static/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>-->
-			<h3 width="auto" height="40" class="d-inline-block align-top" alt="">E-commerce Shop</h3>
-
-		</a>
+            <h3 class="d-inline-block align-top">E-commerce Shop</h3>
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -48,37 +70,39 @@
 </nav>
 <div class="container-fluid">
     <a th:href="@{/VITproject/admin/products/add}" style="margin: 30px 0" class="btn btn-primary">Add Product</a> <!--sends GET request to URI path-->
-	<!-- if products are empty -->
-	<!--<div th:if="${#lists.isEmpty(products)}" class="alert alert-warning" role="alert">No products available.</div>-->
-	<!-- if products are not empty -->
-	<!--<table class="table" th:if="${!#lists.isEmpty(products)}">-->
-	<table class="table">
-		<div class="alert alert-success" id="responseAlert" role="alert" th:text="${response_message}"></div>
-        <thead class="thead-light">
-        <tr>
-            <th scope="col">SN</th>
-            <th scope="col">Product Name</th>
-            <th scope="col">Category</th>
-            <th scope="col">Preview</th>
-            <th scope="col">Delete</th>
-            <th scope="col">Update</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <tr th:each="product, iStat : ${products}">
-            <th scope="row" th:text="${iStat.index + 1}"><!----></th>
-            <td th:text="${product.name}"><!----></td>
-            <!--<td th:text="${product.category.name}"></td>-->
-			<td th:text="${product.category != null ? product.category.name : 'No Category'}"><!----></td>
-            <td><img src="" height="100px" width="100px"  th:src="@{${'/productImages/' + product.imageName}}"></td>
-
-            <td><a href="" th:href="@{/admin/product/delete/{id}(id=${product.id})}" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">Delete</a></td>
-            <td><a href="" th:href="@{/admin/product/update/{id}(id=${product.id})}" class="btn btn-warning">Update</a></td>
-        </tr>
-        </tbody>
-    </table>
-	<h3 style="margin-left:450px" th:if="${#lists.isEmpty(products)}">No products available</h3>
+    <!-- if products are empty -->
+    <!--<div th:if="${#lists.isEmpty(products)}" class="alert alert-warning" role="alert">No products available.</div>-->
+    <!-- if products are not empty -->
+    <!--<table class="table" th:if="${!#lists.isEmpty(products)}">-->
+    <div class="table-container">
+        <div class="alert alert-success" id="responseAlert" role="alert" th:text="${response_message}"></div>
+        <table class="table table-grey">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">SN</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Preview</th>
+                <th scope="col">Delete</th>
+                <th scope="col">Update</th>
+            </tr>
+            </thead>
+            <tbody>
+    
+            <tr th:each="product, iStat : ${products}">
+                <th scope="row" th:text="${iStat.index + 1}"><!----></th>
+                <td th:text="${product.name}"><!----></td>
+                <!--<td th:text="${product.category.name}"></td>-->
+                <td th:text="${product.category != null ? product.category.name : 'No Category'}"><!----></td>
+                <td><img src="" height="100px" width="100px"  th:src="@{${'/productImages/' + product.imageName}}"></td>
+    
+                <td><a href="" th:href="@{/VITproject/admin/products/delete/{id}(id=${product.id})}" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">Delete</a></td>
+                <td><a href="" th:href="@{/VITproject/admin/products/update/{id}(id=${product.id})}" class="btn btn-warning">Update</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <h3 style="margin-left:450px" th:if="${#lists.isEmpty(products)}">No products available</h3>
 </div>
 
 <!-- Modal (pop-up)-->
@@ -104,25 +128,25 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <script>
-	//JS for alert box
-	    $(document).ready(function () {
-	        var responseMessage = [[${response_message != null}]];
-	        if (responseMessage) {
-	            var alertBox = $('#responseAlert');
-	            alertBox.show();
-	            setTimeout(function () {
-	      			alertBox.hide();
-	            }, 4000); 
-	        }
-	    });
+    //JS for alert box
+    $(document).ready(function () {
+        var responseMessage = [[${response_message != null}]];
+        if (responseMessage) {
+            var alertBox = $('#responseAlert');
+            alertBox.show();
+            setTimeout(function () {
+                alertBox.hide();
+            }, 3000); 
+        }
+    });
 
-		//JS for Cancel Modal
-	    $('#cancelModal').on('show.bs.modal', function (event) {
-	        var button = $(event.relatedTarget);
-	        var href = button.attr('href');
-	        var modal = $(this);
-	        modal.find('#confirmDelete').attr('href', href);
-	    });
+    //JS for Cancel Modal
+    $('#cancelModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var href = button.attr('href');
+        var modal = $(this);
+        modal.find('#confirmDelete').attr('href', href);
+    });
 </script>
 </body>
 </html>
