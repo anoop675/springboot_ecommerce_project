@@ -9147,3 +9147,9 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/anoop/O
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 61 more
+2024-08-25 10:10:41.842189+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "PRODUCT_DESCRIPTION CHARACTER VARYING(250)": "U&'Have you ever walked on Air? Step into the Air VaporMax 2023 to see how it''s... (428)"; SQL statement:
+insert into product_table (category_id,product_description,product_image_name,product_name,product_price,product_weight,product_id) values (?,?,?,?,?,?,?) [22001-224]
+2024-08-25 10:11:00.599704+05:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Value too long for column "PRODUCT_DESCRIPTION CHARACTER VARYING(250)": "U&'Have you ever walked on Air? Step into the Air VaporMax 2023 to see how it''s... (424)"; SQL statement:
+insert into product_table (category_id,product_description,product_image_name,product_name,product_price,product_weight,product_id) values (?,?,?,?,?,?,?) [22001-224]

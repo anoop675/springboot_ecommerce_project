@@ -38,7 +38,7 @@ public class Product {
 	@Column(name="product_weight", length=200, unique=false)
 	private double weight;
 	
-	@Column(name="product_description", length=250, unique=false)
+	@Column(name="product_description", length=1000, unique=false)
 	private String description;
 	
 	@Column(name="product_image_name", length=250, unique=false)
