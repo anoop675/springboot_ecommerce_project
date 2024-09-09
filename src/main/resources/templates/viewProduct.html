@@ -84,7 +84,9 @@
             <h5>Weight:
                 <span th:text="${product.weight}"></span> grams.
             </h5>
-            <p th:text="${product.description}"></p>
+			<p>Description: 
+            	<span th:text="${product.description}" style="margin-top: 20px"></span>
+			</p>
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn btn-primary">Add to cart</a>
         </div>
     </div>

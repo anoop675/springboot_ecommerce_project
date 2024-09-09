@@ -27,9 +27,10 @@ public class User {
 	private int id;
 	
 	@NotEmpty
-	@Column(name = "user_name", length = 100, unique = false, nullable = false)
+	@Column(name = "user_firstname", length = 100, unique = false, nullable = false)
 	private String firstName;
 	
+	@Column(name = "user_lastname", length = 100, unique = false, nullable = true)
 	private String lastName;
 	
 	@Column(name = "user_email", length = 100, unique = true, nullable = false)
@@ -40,13 +41,30 @@ public class User {
 	@Column(name = "user_password", length = 250, unique = true, nullable = false)
 	private String password;
 	
-	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-	@JoinTable(
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER) //Defines many-to-many relationship between User ("users") and Role ("roles")
+	@JoinTable(	//Creates a join table named ("user_role") where user_id and role_id are foreign keys
 			name = "user_role",
-			joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
-			inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")}
+			joinColumns = {
+					@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+				},
+			inverseJoinColumns = {
+					@JoinColumn(name = "role_id", referencedColumnName = "role_id")
+				}
 	)
+	//many-to-many relationship with roles
 	private List<Role> roles;
+	
+	/*
+	 * DB schema model
+	 	users            user_role         roles
+	    -------          -----------       -------
+		user_id    ----> user_id           role_id
+		firstName        role_id  <----    name
+		lastName
+		email
+		password
+
+	 */
 
 	public User(User user) {
 		this.firstName = user.getFirstName();

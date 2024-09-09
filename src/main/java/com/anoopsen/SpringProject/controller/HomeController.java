@@ -3,6 +3,7 @@ package com.anoopsen.SpringProject.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.anoopsen.SpringProject.model.Category;
 import com.anoopsen.SpringProject.model.Product;
+import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.service.CategoryService;
 import com.anoopsen.SpringProject.service.ProductService;
 
@@ -27,6 +29,9 @@ public class HomeController {
 	//@GetMapping(value={"/", "/home"})
 	@GetMapping(value="/home")
 	public String home(Model model) {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = (User)principal;
+		model.addAttribute("firstname", user.getFirstName());
 		return "index";
 	}
 	

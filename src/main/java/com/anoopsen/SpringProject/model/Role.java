@@ -19,12 +19,12 @@ public class Role {
 	@Column(name = "role_id", length = 50)
 	private Integer id;
 	
-	@Column(nullable = false, unique = true)
 	@NotEmpty
+	@Column(name = "role_name", length = 100, nullable = false, unique = true)
 	private String name;
 	
+	//many-to-many relationship with users (refer User model)
 	@ManyToMany(mappedBy = "roles")
 	private List<User> users;
-	
 	
 }
