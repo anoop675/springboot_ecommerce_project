@@ -22,7 +22,7 @@ import lombok.Data;
 @Table(name = "users")
 public class User {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.AUTO)  //generates a random integer id (not sequential), if sequence is required then use SEQUENCE generationType
 	@Column(name = "user_id", length = 50)
 	private int id;
 	
@@ -30,16 +30,19 @@ public class User {
 	@Column(name = "user_firstname", length = 100, unique = false, nullable = false)
 	private String firstName;
 	
-	@Column(name = "user_lastname", length = 100, unique = false, nullable = true)
-	private String lastName;
+	@Column(name = "user_phone", length = 100, unique = true, nullable = true)
+	private String phoneNum;
 	
 	@Column(name = "user_email", length = 100, unique = true, nullable = false)
 	@Email(message = "{errors.invalid_email}")
 	private String email;
 	
 	//@NotEmpty
-	@Column(name = "user_password", length = 250, unique = true, nullable = false)
+	@Column(name = "user_password", length = 250, unique = true, nullable = true)
 	private String password;
+	
+	@Column(name = "oauth2_user", nullable = false)
+    private boolean oauth2User;
 	
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER) //Defines many-to-many relationship between User ("users") and Role ("roles")
 	@JoinTable(	//Creates a join table named ("user_role") where user_id and role_id are foreign keys
@@ -68,7 +71,7 @@ public class User {
 
 	public User(User user) {
 		this.firstName = user.getFirstName();
-		this.lastName = user.getLastName();
+		this.phoneNum = user.getPhoneNum();
 		this.email = user.getEmail();
 		this.password = user.getPassword();
 		this.roles = user.getRoles();

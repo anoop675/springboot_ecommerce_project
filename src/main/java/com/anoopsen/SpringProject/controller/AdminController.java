@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,8 +27,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.anoopsen.SpringProject.dto.ProductDto;
 import com.anoopsen.SpringProject.model.Category;
 import com.anoopsen.SpringProject.model.Product;
+import com.anoopsen.SpringProject.model.Role;
+import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.service.CategoryService;
 import com.anoopsen.SpringProject.service.ProductService;
+import com.anoopsen.SpringProject.service.UserService;
 
 @Controller
 @RequestMapping(value="/VITproject")
@@ -38,6 +42,9 @@ public class AdminController {
 	
 	@Autowired
 	ProductService product_service;
+	
+	@Autowired
+	UserService userService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 	
@@ -158,5 +165,32 @@ public class AdminController {
 		model.addAttribute("categories", categories);
 		
 		return "productAdd";
+	}
+	
+	@GetMapping(value="/admin/users")
+	public String manageUsers(Model model) {
+		List<User> users = userService.getAllUsers();
+		model.addAttribute("users", users);
+		return "users";
+	}
+	
+	@GetMapping(value="/admin/users/delete/{id}")
+	public String manageUsers(@PathVariable int id, RedirectAttributes redirectAttributes) {
+		userService.removeUser(id);
+		redirectAttributes.addFlashAttribute("response_message", "User deleted successfully!");
+		return "redirect:/VITproject/admin/users";
+	}
+	
+	@GetMapping(value="/admin/users/add")
+	public String getUserAdd(){
+		return "userAdd";
+	}
+	
+	@PostMapping(value="/admin/users/add")
+	public String postuserAdd(@ModelAttribute User user, RedirectAttributes redirectAttributes) throws Exception{
+		userService.createUser(user, user.getPassword(), new ArrayList<Role>());
+		redirectAttributes.addFlashAttribute("response_message", "User added/updated successfully!");
+		
+		return "redirect:/VITproject/admin/users";
 	}
 }

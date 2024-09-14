@@ -36,6 +36,25 @@
 		#or::after {
 		  right: 0;
 		}
+
+		.img-container {
+		    padding: 30px;
+		    text-align: center;
+		}
+
+		.img-container img {
+			/*max-width: 100%*/
+		    width: auto; 
+		    height: auto; /* Set the image height to 80% of the viewport height */
+		    margin-top: -40px;
+		    object-fit: cover; /* Ensures the image doesn't distort */
+		}
+		#lottie-animation {
+			margin-right: -100px;
+		    width: 600px; 
+		    height: 600px; 
+		    border: 1px solid #ddd; /*for debugging*/
+		}
 	</style>
 </head>
 <body>
@@ -52,14 +71,14 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto"></ul>
             <ul class="navbar-nav">
-                <li class="nav-item active">
+                <!--<li class="nav-item active">
                     <a class="nav-link" th:href="@{/VITproject/home}" href="#">home</a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" th:href="@{VITproject/shop}" href="#">shop</a>
-                </li>
+                </li>-->
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Sign Up</a>
+                    <a class="nav-link" th:href="@{/VITproject/register}" href="#">Sign Up</a>
                 </li>
             </ul>
         </div>
@@ -112,6 +131,18 @@
                 <i class="fab fa-google"></i>  Sign in with Google
             </a>
         </div>
+
+        <!--Right column with the image-->
+        <div class="col-sm-6 img-container">
+            <img th:src="@{/images/loginImage3.jpg}" alt="E-commerce image" class="img-fluid">
+        </div>
+		<!--<div class="col-sm-6">
+		    Lottie animation container 
+			<dotlottie-player src="https://lottie.host/7401522f-2d8b-4049-ad18-eb0edb6af224/CE9lFrNlEH.json" background="transparent"
+							 speed="1" style="width: 300px; height: 300px" direction="1" playMode="normal" loop controls autoplay></dotlottie-player>		  
+			<!-<div id="lottie-animation"></div>->
+		</div>-->
+		
     </div>
 </div>
 
@@ -149,6 +180,25 @@
         }
     });
 </script>
+
+<!--Lottie animation JS-->
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script> <!--https://lottiefiles.com/free-animations/ecommerce-->
+
+<!--
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    var animation = lottie.loadAnimation({
+	        container: document.getElementById('lottie-animation'), // the DOM element
+	        renderer: 'svg', // render the animation as SVG
+	        loop: true, // loop the animation
+	        autoplay: true, // autoplay the animation
+	        path: 'static/images/lottieAnimationLogin.json' // the path to the JSON file
+	    });
+		animation.addEventListener('DOMLoaded', function() {
+		    console.log('Animation Loaded');
+		});
+	});
+</script>-->
 
 </body>
 </html>

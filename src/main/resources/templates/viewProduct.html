@@ -28,13 +28,21 @@
 			    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
 			    filter: brightness(100%);  /*Makes the image more blunt */
 			    transition: transform 0.3s, filter 0.0s;
+				margin-top: 60px;
 			}
 			.image:hover {
-			    transform: scale(1.05); /* Slight zoom effect on hover */
-			    filter: brightness(100%); /* Restore brightness on hover */
+			    transform: scale(1.05); 
+			    filter: brightness(100%);
 			}
 			.price {
 			    font-weight: bold;
+			}
+			/* Custom CSS for positioning and sizing the dropdown menu */
+			.navbar .dropdown-menu {
+			    right: -10px; /* Adjust this value to add spacing from the right */
+			    left: auto; /* Prevent auto left positioning */
+			    max-width: 200px; /* Adjust this value to control the width */
+			    width: auto; /* Ensure the width adjusts to max-width */
 			}
 
 	</style>
@@ -58,12 +66,11 @@
                         Menu
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" th:href="@{/VITproject/home}" href="#">home</a>
-                        <a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">shop</a>
-                        <a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/VITproject/login}" href="#">login</a>
-                        <a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">logout</a>
-                        <a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">cart</a>
-                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">Home</a>
+                        <!--<a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/VITproject/login}" href="#">login</a>-->
+                        <a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
+                        <a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">Cart</a>
+                        <!--<div class="dropdown-divider"></div>-->
                         <span class="dropdown-item" th:text="${cartCount}">0</span>
                     </div>
                 </li>
@@ -87,7 +94,7 @@
 			<p>Description: 
             	<span th:text="${product.description}" style="margin-top: 20px"></span>
 			</p>
-            <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn btn-primary">Add to cart</a>
+            <a href="" th:href="@{/VITproject/addToCart/{id}(id = ${product.id})}" class="btn btn-primary">Add to cart</a>
         </div>
     </div>
 </div>

@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
@@ -38,11 +39,17 @@ public class SecurityConfig{
 	@Lazy
     CustomUserDetailsService customUserDetailsService;
 	
-	@Autowired
-	GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
-	
+	//@Autowired
+	//GoogleOAuth2SuccessHandler googleOAuth2SuccessHandler;
+	@Bean
+    public AuthenticationSuccessHandler oAuth2SuccessHandler() {
+        return new GoogleOAuth2SuccessHandler();
+    }
 	@Autowired
 	PasswordEncoderConfig pwdEncoder;
+	
+	@Autowired
+	CustomAuthenticationSuccessHandler authHandler;
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -52,29 +59,31 @@ public class SecurityConfig{
 				)
 				.authorizeHttpRequests(httpRequest -> 
 					httpRequest
-								.requestMatchers("/resources/**", "/static/**", "/images/**", "/productImages/**", "/css/**", "/js/**").permitAll()
+								.requestMatchers("/resources/**", "/static/**", "/images/**", "/productImages/**", "/css/**", "/js/**",
+										"/lottie.host/7401522f-2d8b-4049-ad18-eb0edb6af224/CE9lFrNlEH.json").permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject")).permitAll()
 								//.requestMatchers(new AntPathRequestMatcher("/VITproject/shop/**")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject/forgotPassword")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject/register")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-								//.requestMatchers(new AntPathRequestMatcher("/login/oauth2/code/google")).permitAll()
-								.requestMatchers(new AntPathRequestMatcher("/VITproject/admin/")).hasRole("ADMIN")
+								.requestMatchers(new AntPathRequestMatcher("/oauth2/authorization/google")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/VITproject/admin/**")).hasRole("ADMIN")
 								.anyRequest().authenticated()
 				)
 				.formLogin(form ->
 					form
 							.loginPage("/VITproject/login")
 							.permitAll()
+							.successHandler(authHandler) // custom authentication success handler is set
+							//.defaultSuccessUrl("/VITproject/home")
 							.failureUrl("/VITproject/login?error=true")
-							.defaultSuccessUrl("/VITproject/home")
 							.usernameParameter("email")
 							.passwordParameter("password")
 				)
 				.oauth2Login(oauthLogin -> 
 					oauthLogin
 								.loginPage("/VITproject/login")
-								.successHandler(googleOAuth2SuccessHandler)
+								.successHandler(this.oAuth2SuccessHandler())
 				)
 				.logout(logout -> 
 					logout

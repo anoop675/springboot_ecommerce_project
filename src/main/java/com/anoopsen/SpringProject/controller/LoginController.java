@@ -6,8 +6,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +21,7 @@ import com.anoopsen.SpringProject.model.Role;
 import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.repository.RoleRepository;
 import com.anoopsen.SpringProject.repository.UserRepository;
+import com.anoopsen.SpringProject.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -28,13 +32,7 @@ public class LoginController {
 	Logger logger = LoggerFactory.getLogger(LoginController.class);
 	
 	@Autowired
-	PasswordEncoderConfig pwdEncoder;
-	
-	@Autowired
-	UserRepository userRepo;
-	
-	@Autowired
-	RoleRepository roleRepo;
+	UserService userService;
 	
 	@GetMapping(value="/login")
 	public String login() {
@@ -47,24 +45,33 @@ public class LoginController {
 	}
 	
 	@PostMapping(value="/register")
-	public String registerPost(@ModelAttribute("user") User user, HttpServletRequest request) throws Exception {
+	public String registerPost(@ModelAttribute("user") User user, HttpServletRequest request, Model model) throws Exception {
 		
 		logger.info(
 				"firstname: "+user.getFirstName()
-				+", lastname: "+user.getLastName()
+				+", phoneNum: "+user.getPhoneNum()
 				+", email: "+user.getEmail()
 				+", password: "+user.getPassword()
 			);
 		
 		String password = user.getPassword();
-		user.setPassword(pwdEncoder.passwordEncoder().encode(password));
 		List<Role> roles = new ArrayList<>();
-		roles.add(roleRepo.findById(2).get());
-		user.setRoles(roles);
-		userRepo.save(user);
 		
-		request.login(user.getEmail(), password);
-		return "redirect:/VITproject/home";
+		ResponseEntity<String> response = userService.createUser(user, password, roles);
+		
+		logger.info("User: "+user.getFirstName()+" with http status: "+response.getStatusCode());
+		
+		// Handle the response based on the status
+	    if (response.getStatusCode() == HttpStatus.CREATED) {
+	        request.login(user.getEmail(), password);  // If user is created successfully, log the user in
+	        return "redirect:/VITproject/shop";
+	    } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
+	        model.addAttribute("errorMessage", "User with this email already exists."); // If there's a conflict (user already exists), show an error message
+	        return "register";
+	    } else {
+	        model.addAttribute("errorMessage", "An error occurred during registration. Please try again."); // For other errors, show a generic error message
+	        return "register"; 
+	    }
 	}
 	
 }
