@@ -59,7 +59,7 @@ public class ProductService {
 	
 	public ProductDto getProductById(int id){
 		Product product = product_repository.findById(id).get(); 
-
+		
 		ProductDtoBuilder productDtoBuilder = ProductDto.builder()
 														.id(product.getId())
 														.name(product.getName())
@@ -70,9 +70,14 @@ public class ProductService {
 														.imageName(product.getImageName());
 				  
 		
-		
 		ProductDto productDto = productDtoBuilder.build();
 		return productDto;
+	}
+	
+	public Product get_productById(int id) {
+		Optional<Product> product = product_repository.findById(id);
+		
+		return product.get();
 	}
 	
 	public List<Product> getAllProductByCategoryId(int id){

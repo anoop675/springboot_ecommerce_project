@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <title>Sign-up</title>
+	<style>
+		.img-container {
+			padding: 30px;
+			text-align: center;
+		}
+
+		.img-container img {
+			max-width: 100%; 
+			height: auto; 
+			object-fit: cover;
+			margin-top: -30px;
+		}
+	</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light" >
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <!--<img th:src="@{/images/logo.png}" src="../static/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>-->
+			<h3>E-commerce Shop</h3>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+		
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto"></ul>
+            <ul class="navbar-nav">
+                <!--<li class="nav-item active">
+                    <a class="nav-link" th:href="@{/VITproject/home}" href="#">home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/VITproject/shop}" href="#">shop</a>
+                </li>-->
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/VITproject/login}" href="#">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <!-- Left column with the form -->
+        <div class="col-sm-6">
+            <h3 style="margin-top: 20px">Sign Up</h3>
+            <form th:action="@{/VITproject/register}" th:object="${user}" method="post" style="margin-top: 20px">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" name="firstName" id="firstName" required placeholder="First Name" class="form-control form-control-lg">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNum">Phone Number</label>
+                    <input type="text" name="phoneNum" id="phoneNum" required placeholder="Phone Number" class="form-control form-control-lg">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control form-control-lg" required minlength="6" placeholder="Email" name="email" id="email"
+                           aria-describedby="emailHelp">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+				<div class="form-group">
+				    <label for="password">Password</label>
+				    <input type="password" class="form-control form-control-lg" required placeholder="Password" name="password"
+				           id="password" oninput="validatePassword()">
+					<div id="passwordHelpBlock" class="form-text text-muted" style="font-size: 12px; line-height: 1.2;">
+					Your password must contain at least:
+					<ul>
+						<li id="uppercase" style="color: red; font-weight: bold;">One uppercase letter</li>
+						<li id="number" style="color: red; font-weight: bold;">One number</li>
+						<li id="special" style="color: red; font-weight: bold;">One special character</li>
+					</ul>
+					</div>
+				</div>
+
+                <input type="submit" value="Register" class="btn btn-primary btn-block" style="margin-top: 20px">
+                <span style="margin-top: 10px">Already have an account? <a class="linkControl" href="./login.html"
+                                                                          th:href="@{VITproject/login}">Login here</a></span>
+            </form>
+        </div>
+
+        <!-- Right column with the image -->
+        <div class="col-sm-6 img-container">
+            <img th:src="@{/images/loginImage2.jpg}" alt="E-commerce image" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- Modal Structure for Invalid Registration -->
+<div class="modal fade" id="regErrorModal" tabindex="-1" role="dialog" aria-labelledby="loginErrorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginErrorModalLabel">Registration Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span th:text="${errorMessage}">Invalid registration attempt.</span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // If the error message exists, show the modal
+  window.onload = function() {
+    if([[${errorMessage != null}]]) {
+      $('#regErrorModal').modal('show');
+    }
+  }
+</script>
+<script>
+    function validatePassword() {
+        var password = document.getElementById("password").value;
+
+        //Regex
+        var uppercaseRegex = /[A-Z]/;
+        var numberRegex = /[0-9]/;
+        var specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+        // If password contains atleast an uppercase letter
+        if (uppercaseRegex.test(password)) {
+            document.getElementById("uppercase").style.color = "green";
+        } else {
+            document.getElementById("uppercase").style.color = "red";
+        }
+
+        // If password contains atleast a number
+        if (numberRegex.test(password)) {
+            document.getElementById("number").style.color = "green";
+        } else {
+            document.getElementById("number").style.color = "red";
+        }
+
+        // If password contains atleast one special character
+        if (specialCharRegex.test(password)) {
+            document.getElementById("special").style.color = "green";
+        } else {
+            document.getElementById("special").style.color = "red";
+        }
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
