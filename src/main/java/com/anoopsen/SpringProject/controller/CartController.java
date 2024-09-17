@@ -47,11 +47,11 @@ public class CartController {
 	
 	@GetMapping(value="/checkout")
 	public String checkout(Model model, RedirectAttributes redirectAttributes) {
-	    if(Cart.cart.isEmpty()) {
+	    /*if(Cart.cart.isEmpty()) {
 	    	logger.info("Cart is Empty?: "+Cart.cart.isEmpty());
 	        redirectAttributes.addFlashAttribute("error_message", "Sorry, your cart is empty");
 	        return "redirect:/VITproject/cart";	
-	    }
+	    }*/
 	    
 	    Double total = Cart.cart.stream().mapToDouble(product -> product.getPrice()).sum();
 		model.addAttribute("total", total);
