@@ -11,6 +11,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,17 +77,25 @@ public class AdminController {
 	
 	@PostMapping(value="/admin/categories/add")                                    
 	public String postCategoriesAdd(@ModelAttribute("category") Category category, RedirectAttributes redirectAttributes) { //you should use RedirectAttributes when you need to pass data to another controller after performing a redirect.
-		category_service.addCategory(category);
-	    redirectAttributes.addFlashAttribute("response_message", "Category added/updated successfully!"); //this will give a message as feedback to form
+		ResponseEntity<String> status = category_service.addCategory(category);
+	    redirectAttributes.addFlashAttribute("response_message", status.getBody()); //this will give a message as feedback to form
 	    return "redirect:/VITproject/admin/categories";
 	}
 
 	//NOTE: By default, clicking an <a> tag sends a GET request to the server, retrieving information from the linked URL.
 	@GetMapping(value="/admin/categories/delete/{id}")
 	public String deleteCategory(@PathVariable int id, RedirectAttributes redirectAttributes) { //extract 'id' value from the URI path
-		category_service.removeCategory(id);
-	    redirectAttributes.addFlashAttribute("response_message", "Category deleted successfully!"); //this will give a message as feedback to form
-
+		//We need to check if products exist under that category. NOTE: Did not implemented DELETE ON CASCADE in Product table referencing Category table
+		ResponseEntity<String> status = category_service.removeCategory(id, product_service);
+		if(status.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+			redirectAttributes.addFlashAttribute("error_message", status.getBody());
+		}
+		else if(status.getStatusCode() == HttpStatus.OK) {
+			redirectAttributes.addFlashAttribute("response_message", status.getBody());
+		}
+		else {
+			redirectAttributes.addFlashAttribute("error_message", "Something went wrong, Please try again.");
+		}
 		return "redirect:/VITproject/admin/categories";
 	}
 	
@@ -98,9 +108,8 @@ public class AdminController {
 
 			return "categoriesAdd";
 		}
-		else { 
+		else
 			return "404";
-		}
 	}
 	
 	//Product Section
@@ -134,15 +143,12 @@ public class AdminController {
 		
 		imgName = (imgName.equals(null)) ? productDto.getImageName() : imgName;
 		
-		
 		logger.info(productDto.toString());
 		logger.info(file.getOriginalFilename().toString());
 		logger.info(imgName);
 		
-		
-		product_service.addProduct(productDto, file, imgName);
-		
-		redirectAttributes.addAttribute("response_message", "Product added/updated successfully!");
+		ResponseEntity<String> status = product_service.addProduct(productDto, file, imgName);
+		redirectAttributes.addAttribute("response_message", status.getBody());
 		
 		return "redirect:/VITproject/admin/products";
 	}

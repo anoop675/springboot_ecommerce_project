@@ -75,6 +75,7 @@
     <!-- if categories are not empty -->
     <div class="table-container">
         <div class="alert alert-success" id="responseAlert" role="alert" th:text="${response_message}"></div>
+		<div class="alert alert-danger" id="responseAlert2" role="alert" th:text="${error_message}"></div>
         <!--<table class="table table-grey" th:if="${!#lists.isEmpty(categories)}">-->
         <table class="table table-grey">
             <thead class="thead-light">
@@ -125,7 +126,6 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 <script>
-    //JS for alert box
     $(document).ready(function () {
         var responseMessage = [[${response_message != null}]];
         if (responseMessage) {
@@ -136,6 +136,16 @@
             }, 3000); 
         }
     });
+	$(document).ready(function () {
+	     var errorMessage = [[${error_message != null}]];
+	     if (errorMessage) {
+	        var alertBox = $('#responseAlert2');
+	        alertBox.show();
+	        setTimeout(function () {
+	            alertBox.hide();
+	        }, 3000); 
+	     }
+	});
 
     //JS for Cancel Modal
     $('#cancelModal').on('show.bs.modal', function (event) {
