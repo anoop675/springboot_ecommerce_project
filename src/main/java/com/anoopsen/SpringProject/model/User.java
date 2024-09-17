@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Email;
@@ -68,6 +69,8 @@ public class User {
 		password
 
 	 */
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Cart cart;
 
 	public User(User user) {
 		this.firstName = user.getFirstName();
@@ -75,6 +78,7 @@ public class User {
 		this.email = user.getEmail();
 		this.password = user.getPassword();
 		this.roles = user.getRoles();
+		this.cart = user.getCart();
 	} 
 	
 	public User() {

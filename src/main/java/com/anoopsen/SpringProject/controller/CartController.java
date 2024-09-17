@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.anoopsen.SpringProject.global.Cart;
+import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.Product;
+import com.anoopsen.SpringProject.service.CartService;
 import com.anoopsen.SpringProject.service.ProductService;
 
 @Controller
@@ -23,19 +24,22 @@ public class CartController {
 	@Autowired
 	ProductService productService;
 	
+	@Autowired
+	CartService cartService;
+	
 	@GetMapping(value="/cart")
 	public String cartGet(Model model) {
-		model.addAttribute("cartCount", Cart.cart.size());
-		Double total = Cart.cart.stream().mapToDouble(product -> product.getPrice()).sum();
-		model.addAttribute("cartCount", Cart.cart.size());
+		//TODO: Fetch cart from DB after dynamically updating total and products----
+		model.addAttribute("cartCount", cart.getTotal());
+		Double total = cartService.getCartTotal();
 		model.addAttribute("total", total);
-		model.addAttribute("cart", Cart.cart);
+		model.addAttribute("cart", cart);
 		return "cart";
 	}
 	
 	@GetMapping(value="/addToCart/{id}")
 	public String addToCart(@PathVariable int id) {
-		Cart.cart.add(productService.get_productById(id));
+		CartService.add(productService.get_productById(id));
 		return "redirect:/VITproject/shop";
 	}
 	
