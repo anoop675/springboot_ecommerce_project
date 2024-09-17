@@ -13,6 +13,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,7 +86,7 @@ public class ProductService {
 		return product_repository.findAllByCategory_Id(id);
 	}
 	
-	public void addProduct(ProductDto productDto, MultipartFile file, String imgName) throws IOException {
+	public ResponseEntity<String> addProduct(ProductDto productDto, MultipartFile file, String imgName) throws IOException {
 		//copy attributes of ProductDto obj to Product obj
 		String imageUUID;
 		if(!file.isEmpty()) {
@@ -110,6 +112,7 @@ public class ProductService {
 		
 		Product product = productBuilder.build();
 		product_repository.save(product);
+		return ResponseEntity.status(HttpStatus.OK).body("Product added successfully!");
 	}
 	
 	public void removeProductById(int id) {
