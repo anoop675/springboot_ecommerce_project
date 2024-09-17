@@ -1,3 +1,4 @@
+//TODO: Make DB Table and define Cart schema
 package com.anoopsen.SpringProject.global;
 
 import java.util.ArrayList;

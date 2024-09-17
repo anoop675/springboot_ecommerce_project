@@ -15850,3 +15850,6 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/anoop/O
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 174 more
+2024-09-18 00:20:24.734016+05:30 jdbc[15]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]MODIFY USERS SET user_password = '$2a$12$Oe34JL.Yp5UIcosFHyNqZercDDKckFa2aw3yni6/rITXt08THV.US' WHERE user_id = 1"; expected "MERGE"; SQL statement:
+MODIFY USERS SET user_password = '$2a$12$Oe34JL.Yp5UIcosFHyNqZercDDKckFa2aw3yni6/rITXt08THV.US' WHERE user_id = 1 [42001-224]

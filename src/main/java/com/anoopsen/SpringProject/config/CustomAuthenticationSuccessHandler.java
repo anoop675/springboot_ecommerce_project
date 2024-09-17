@@ -22,7 +22,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (isAdmin) {
             response.sendRedirect("/VITproject/admin"); // Redirect admin to /VITproject/admin
         } else {
-            response.sendRedirect("/VITproject/home"); // Redirect normal users to /VITproject/home
+            response.sendRedirect("/VITproject/shop"); // Redirect normal users to /VITproject/home
         }
     }
 }

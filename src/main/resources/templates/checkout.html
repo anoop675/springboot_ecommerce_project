@@ -11,7 +11,7 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
 
-    <title>Document</title>
+    <title>E-Commerce Shop</title>
 	<style>
 		#or {
 			position: relative;
@@ -233,11 +233,14 @@
 						    </li>
 						    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
 						          Shipping
-						          <span>0.000014 ETH</span>
+						          <span >0.000014 ETH</span>
 						    </li>
 						 </ul>	
 						 
 						 <form action="" method="post" th:action="@{/VITproject/}" >
+								<p>1 ETH =
+									<span><strong>₹<span th:text="${eth_inr_rate}" style="color: green;"></span></strong></span>
+								</p>
 						       <button type="submit"  class="btn btn-primary btn-block waves-effect waves-light">Pay Now(in ETH)</button>
 						 </form>					
 

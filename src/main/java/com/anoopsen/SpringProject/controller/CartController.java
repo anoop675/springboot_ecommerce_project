@@ -12,6 +12,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.anoopsen.SpringProject.global.Cart;
 import com.anoopsen.SpringProject.model.Product;
+import com.anoopsen.SpringProject.service.CryptoService;
+//import com.anoopsen.SpringProject.service.CryptoService;
 import com.anoopsen.SpringProject.service.ProductService;
 
 @Controller
@@ -22,6 +24,9 @@ public class CartController {
 	
 	@Autowired
 	ProductService productService;
+	
+	@Autowired
+	CryptoService cryptoService;
 	
 	@GetMapping(value="/cart")
 	public String cartGet(Model model) {
@@ -52,9 +57,10 @@ public class CartController {
 	        redirectAttributes.addFlashAttribute("error_message", "Sorry, your cart is empty");
 	        return "redirect:/VITproject/cart";	
 	    }*/
-	    
-	    Double total = Cart.cart.stream().mapToDouble(product -> product.getPrice()).sum();
+		Double total = Cart.cart.stream().mapToDouble(product -> product.getPrice()).sum();
+	    double ethToInrRate = cryptoService.getEthToInrRate(); //fetches real-time Ether(ETH) to INR 
 		model.addAttribute("total", total);
+		model.addAttribute("eth_inr_rate", ethToInrRate);
 		return "checkout";
 	}
 }
