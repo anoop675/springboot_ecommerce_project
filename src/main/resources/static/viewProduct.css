@@ -1,0 +1,31 @@
+.navbar-blue {
+    background-color: #007bff;
+}
+.navbar-blue .navbar-brand, .navbar-blue .nav-link {
+    color: #ffffff;
+}
+.fixed-width-container {
+    width: 1200px;
+    margin-top: 30px;
+}
+.image {
+    border-radius: 10px;
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+    filter: brightness(100%);  /*Makes the image more blunt */
+    transition: transform 0.3s, filter 0.0s;
+	margin-top: 60px;
+}
+.image:hover {
+    transform: scale(1.05); 
+    filter: brightness(100%);
+}
+.price {
+    font-weight: bold;
+}
+/* Custom CSS for positioning and sizing the dropdown menu */
+.navbar .dropdown-menu {
+    right: -10px; /* Adjust this value to add spacing from the right */
+    left: auto; /* Prevent auto left positioning */
+    max-width: 200px; /* Adjust this value to control the width */
+    width: auto; /* Ensure the width adjusts to max-width */
+}

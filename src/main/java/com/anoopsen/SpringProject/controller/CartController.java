@@ -30,7 +30,6 @@ public class CartController {
 	
 	@GetMapping(value="/cart")
 	public String cartGet(Model model) {
-		model.addAttribute("cartCount", Cart.cart.size());
 		Double total = Cart.cart.stream().mapToDouble(product -> product.getPrice()).sum();
 		model.addAttribute("cartCount", Cart.cart.size());
 		model.addAttribute("total", total);
@@ -58,6 +57,7 @@ public class CartController {
 	        return "redirect:/VITproject/cart";	
 	    }*/
 		Double total = Cart.cart.stream().mapToDouble(product -> product.getPrice()).sum();
+		model.addAttribute("cartCount", Cart.cart.size());
 	    double ethToInrRate = cryptoService.getEthToInrRate(); //fetches real-time Ether(ETH) to INR 
 		model.addAttribute("total", total);
 		model.addAttribute("eth_inr_rate", ethToInrRate);

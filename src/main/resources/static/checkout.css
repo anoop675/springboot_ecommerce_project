@@ -1,0 +1,36 @@
+#or {
+	position: relative;
+	width: 300px;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+}
+
+#or::before,
+#or::after {
+	position: absolute;
+	width: 130px;
+	height: 1px;
+	top: 24px;
+	background-color: #aaa;
+	content: '';
+}
+#or::before {
+	left: 0;
+}
+.navbar-blue {
+	background-color: #007bff;
+}
+.navbar-blue .navbar-brand, .navbar-blue .nav-link {
+	color: #ffffff;
+}
+.fixed-width-container {
+	width: 1200px;
+	margin-top: 30px;
+}
+.navbar .dropdown-menu {
+	right: -10px;
+	left: auto; 
+	max-width: 200px; 
+	width: auto; 
+}		

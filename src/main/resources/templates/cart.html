@@ -46,8 +46,9 @@
 	                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">Home</a>
 							<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
-							<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">Cart</a>
-							<span class="dropdown-item" th:text="${cartCount}">0</span>
+							<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">Cart (
+								<span th:text="${cartCount}"><!----></span>)
+							</a>
 	                    </div>
 	                </li>
 	            </ul>

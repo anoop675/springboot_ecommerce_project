@@ -12,44 +12,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
 
     <title>E-Commerce Shop</title>
-	<style>
-		#or {
-			position: relative;
-			width: 300px;
-			height: 50px;
-			line-height: 50px;
-			text-align: center;
-		}
-
-		#or::before,
-		#or::after {
-			position: absolute;
-			width: 130px;
-			height: 1px;
-			top: 24px;
-			background-color: #aaa;
-			content: '';
-		}
-		#or::before {
-			left: 0;
-		}
-		.navbar-blue {
-			background-color: #007bff;
-		}
-		.navbar-blue .navbar-brand, .navbar-blue .nav-link {
-			color: #ffffff;
-		}
-		.fixed-width-container {
-			width: 1200px;
-			margin-top: 30px;
-		}
-		.navbar .dropdown-menu {
-			right: -10px;
-			left: auto; 
-			max-width: 200px; 
-			width: auto; 
-		}		
-	</style>	
+	<link rel="stylesheet" th:href=@{/checkout.css}>	
 </head>
 <body>
 
@@ -72,9 +35,9 @@
 					<a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">Home</a>
 					<!--<a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/VITproject/login}" href="#">login</a>-->
 					<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
-					<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">Cart</a>
-					<!--<div class="dropdown-divider"></div>-->
-					<span class="dropdown-item" th:text="${cartCount}">0</span>
+					<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">Cart (
+						<span th:text="${cartCount}"><!----></span>)
+					</a>
 	            </div>
 	         </li>
 	      </ul>

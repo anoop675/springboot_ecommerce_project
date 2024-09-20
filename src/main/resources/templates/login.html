@@ -10,52 +10,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <title>Login</title>
-	<style>
-		#or {
-		  position: relative;
-		  width: 300px;
-		  height: 50px;
-		  line-height: 50px;
-		  text-align: center;
-		}
-
-		#or::before,
-		#or::after {
-		  position: absolute;
-		  width: 130px;
-		  height: 1px;
-		  top: 24px;
-		  background-color: #aaa;
-		  content: '';
-		}
-
-		#or::before {
-		  left: 0;
-		}
-
-		#or::after {
-		  right: 0;
-		}
-
-		.img-container {
-		    padding: 30px;
-		    text-align: center;
-		}
-
-		.img-container img {
-			/*max-width: 100%*/
-		    width: auto; 
-		    height: auto; /* Set the image height to 80% of the viewport height */
-		    margin-top: -40px;
-		    object-fit: cover; /* Ensures the image doesn't distort */
-		}
-		#lottie-animation {
-			margin-right: -100px;
-		    width: 600px; 
-		    height: 600px; 
-		    border: 1px solid #ddd; /*for debugging*/
-		}
-	</style>
+	<link rel="stylesheet" th:href="@{/login.css}">
 </head>
 <body>
 

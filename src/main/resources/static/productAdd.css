@@ -1,0 +1,28 @@
+.message-info {
+    font-size: 40px;
+    display: inline-block;
+    vertical-align: top;
+}
+.scrollable-content {
+    height: 500px; 
+    overflow-y: scroll;
+    scrollbar-width: none; 
+    -ms-overflow-style: none;  
+}
+.scrollable-content::-webkit-scrollbar {
+    display: none;
+}
+.navbar-primary {
+    background-color: #007bff; /* Blue background */
+}
+.navbar-primary .navbar-brand,
+.navbar-primary .nav-link {
+    color: #ffffff; /* White text */
+}
+/* Centering the content */
+.container {
+	margin-right: -500px;
+    max-width: 1200px; 
+    margin: 0 auto; /* Centering horizontally */
+    padding: 0 40px; /* Optional: add padding to avoid content touching edges */
+}

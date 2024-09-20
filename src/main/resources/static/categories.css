@@ -1,0 +1,33 @@
+.navbar-custom {
+	background-color: #007bff; /* Bootstrap's primary blue color */
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+	color: #ffffff;
+}
+.table-grey {
+	 background-color: #f8f9fa; /* Light grey background */
+ }
+ .table-grey thead {
+	 background-color: #e9ecef; /* Slightly darker grey for the header */
+ }
+ .table-grey tbody tr {
+	 background-color: #f8f9fa; /* Ensuring all rows have the light grey background */
+ }
+.table-grey tbody tr:hover {
+	 background-color: #f1f2f4; /* Slightly darker grey on hover */
+}
+.d-flex {
+	 display: flex;
+	 align-items: center;
+}
+.alert {
+	 display: none; /* Initially hide the alert */
+	 margin-top: -70px; /* Add some space from the top */
+	 position: absolute; /* Make it absolute to place it top-right of the table */
+	 right: 0; /* Align to the right */
+}
+.table-container {
+	 position: relative; /* Make the container relative for absolute positioning */
+}
+	      
