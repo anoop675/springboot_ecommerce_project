@@ -46,7 +46,7 @@ public class Product {
 	private String description;
 	
 	@Column(name="product_image_name", length=250, unique=false)
-	private String imageName;
+	public String imageName;
 	
 	@ManyToMany(mappedBy = "products", cascade = CascadeType.MERGE, fetch = FetchType.EAGER) //FetchType.LAZY
     private List<Cart> carts;

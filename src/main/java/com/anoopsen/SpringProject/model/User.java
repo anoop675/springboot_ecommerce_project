@@ -17,18 +17,20 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
 @Table(name = "users")
 public class User {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)  //generates a random integer id (not sequential), if sequence is required then use SEQUENCE generationType
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id", length = 50)
 	private int id;
 	
 	@NotEmpty
-	@Column(name = "user_firstname", length = 100, unique = false, nullable = false)
+	@Column(name = "user_firstname", length = 100, nullable = false)
 	private String firstName;
 	
 	@Column(name = "user_phone", length = 100, unique = true, nullable = true)
@@ -38,40 +40,30 @@ public class User {
 	@Email(message = "{errors.invalid_email}")
 	private String email;
 	
-	//@NotEmpty
-	@Column(name = "user_password", length = 250, unique = true, nullable = true)
+	@Column(name = "user_password", length = 250, nullable = true)  // Removed 'unique'
 	private String password;
 	
 	@Column(name = "oauth2_user", nullable = false)
-    private boolean oauth2User;
+	private boolean oauth2User;
 	
-	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER) //Defines many-to-many relationship between User ("users") and Role ("roles")
-	@JoinTable(	//Creates a join table named ("user_role") where user_id and role_id are foreign keys
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@JoinTable(
 			name = "user_role",
-			joinColumns = {
-					@JoinColumn(name = "user_id", referencedColumnName = "user_id")
-				},
-			inverseJoinColumns = {
-					@JoinColumn(name = "role_id", referencedColumnName = "role_id")
-				}
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id")
 	)
-	//many-to-many relationship with roles
+	@EqualsAndHashCode.Exclude
 	private List<Role> roles;
 	
-	/*
-	 * DB schema model
-	 	users            user_role         roles
-	    -------          -----------       -------
-		user_id    ----> user_id           role_id
-		firstName        role_id  <----    name
-		lastName
-		email
-		password
-
-	 */
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Cart cart;
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private Cart cart;
 
+	public User() {
+		
+	}
+	
 	public User(User user) {
 		this.firstName = user.getFirstName();
 		this.phoneNum = user.getPhoneNum();
@@ -79,9 +71,5 @@ public class User {
 		this.password = user.getPassword();
 		this.roles = user.getRoles();
 		this.cart = user.getCart();
-	} 
-	
-	public User() {
-		
-	}	
+	}
 }

@@ -8,5 +8,5 @@ import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.User;
 
 public interface CartRepo extends JpaRepository<Cart, Integer>{
-	Optional<Cart> findByUser(String email); //User user
+	Optional<Cart> findByUserEmail(String email); //User user
 }

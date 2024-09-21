@@ -27,7 +27,7 @@
 	</style>
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-blue">
+	<nav class="navbar navbar-expand-lg navbar-blue fixed-top">
 	    <div class="container-fluid">
 	        <a class="navbar-brand" href="#">
 	            <h3 class="d-inline-block align-top">E-commerce Shop</h3>
@@ -46,8 +46,9 @@
 	                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 							<a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">Home</a>
 							<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
-							<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">Cart</a>
-							<span class="dropdown-item" th:text="${cartCount}">0</span>
+							<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">
+							    Cart (<span th:text="${cartCount}">0</span>)
+							</a>
 	                    </div>
 	                </li>
 	            </ul>
@@ -56,7 +57,7 @@
 	</nav>
 
 <main>
-    <div class="container">
+    <div class="container" style="padding-top: 70px">
 
         <!--Section: Block Content-->
         <section class="mt-5 mb-4">
@@ -91,7 +92,7 @@
                                         </div>
                                         <div class="mt-5 d-flex justify-content-between align-items-center">
                                             <div>
-                                                <a href="#!" th:href="@{/cart/removeItem/{index}(index=${iStat.index})}"  type="button" class="card-link-secondary small text-uppercase mr-3"><i
+                                                <a href="#!" th:href="@{/VITproject/cart/removeItem/{index}(index=${iStat.index})}"  type="button" class="card-link-secondary small text-uppercase mr-3"><i
                                                         class="fas fa-trash-alt mr-1"></i> Remove item </a>
                                             </div>
                                             <p class="mb-0"><span><strong>₹<span th:text="${item.price}"></span></strong></span></p>

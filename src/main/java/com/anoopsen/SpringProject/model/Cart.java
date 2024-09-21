@@ -20,6 +20,7 @@ import lombok.Data;
 public class Cart {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "cart_id", nullable = false, unique = true)
     private int id;
 	
 	@Column(name = "cart_total", length = 200, nullable = false)

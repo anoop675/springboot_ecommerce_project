@@ -33,7 +33,7 @@ public class UserService {
 	PasswordEncoderConfig pwdEncoder;
 	
 	@Autowired
-	CartRepo cartRepo;
+	CartService cartService;
 	
 	public ResponseEntity<String> createUser(User user, String password, List<Role> roles) throws Exception{
 		
@@ -53,15 +53,11 @@ public class UserService {
 			user.setRoles(roles); //setting role
 			user.setOauth2User(false);
 		
-			//create an Empty cart simultaneously
-			Cart cart = new Cart();
-			cart.setTotal(0);
-			cart.setProducts(null);
-			cart.setUser(user);
-			cartRepo.save(cart);
-			//---------------------------------
-			
 			userRepo.save(user);
+			//create an Empty cart simultaneously
+			cartService.createEmptyCart(user);
+			logger.info("cart created");
+			
 			logger.info("User: "+user.getFirstName()+"with email: "+user.getEmail()+", is registered successfully");
 			return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully.");
 

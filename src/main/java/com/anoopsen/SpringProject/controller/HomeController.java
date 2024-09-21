@@ -6,6 +6,8 @@ package com.anoopsen.SpringProject.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
@@ -15,10 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.anoopsen.SpringProject.global.Cart;
 import com.anoopsen.SpringProject.model.Category;
 import com.anoopsen.SpringProject.model.Product;
 import com.anoopsen.SpringProject.model.User;
+import com.anoopsen.SpringProject.service.CartService;
 import com.anoopsen.SpringProject.service.CategoryService;
 import com.anoopsen.SpringProject.service.ProductService;
 
@@ -26,11 +28,16 @@ import com.anoopsen.SpringProject.service.ProductService;
 @RequestMapping(value="/VITproject")
 public class HomeController {
 	
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
 	@Autowired
 	CategoryService category_service;
 	
 	@Autowired
 	ProductService product_service;
+	
+	@Autowired
+	CartService cartService;
 	
 	@GetMapping(value="/shop")
 	public String home(Model model) {
@@ -47,11 +54,13 @@ public class HomeController {
 	        User user = (User) principal;
 	        model.addAttribute("firstname", user.getFirstName());
 	    }
-	    model.addAttribute("cartCount", Cart.cart.size());
+	    
+	    logger.info(SecurityContextHolder.getContext().getAuthentication().toString());
+	    model.addAttribute("cartCount", cartService.getCartCount());
 	    
 	    model.addAttribute("categories", category_service.getAllCategory());
 		model.addAttribute("products", product_service.getAllProduct());
-		model.addAttribute("cartCount", Cart.cart.size());
+		//model.addAttribute("cartCount", Cart.cart.size());
 	    
 	    return "shop";
 	}
@@ -72,7 +81,7 @@ public class HomeController {
 		Product product = product_service.get_productById(id);
 		
 		model.addAttribute("product", product);
-		model.addAttribute("cartCount", Cart.cart.size());
+		model.addAttribute("cartCount", cartService.getCartCount());
 		
 		return "viewProduct";
 	}

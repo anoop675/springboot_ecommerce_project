@@ -28,6 +28,7 @@ import com.anoopsen.SpringProject.model.Role;
 import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.repository.RoleRepository;
 import com.anoopsen.SpringProject.repository.UserRepository;
+import com.anoopsen.SpringProject.service.CartService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,6 +46,9 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler{
 	
 	@Autowired
 	RoleRepository roleRepo;
+	
+	@Autowired
+	CartService cartService;
 	
 	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -81,6 +85,8 @@ public class GoogleOAuth2SuccessHandler implements AuthenticationSuccessHandler{
 			user.setRoles(roles);
 			
 			userRepo.save(user);
+			
+			cartService.createEmptyCart(user);
 		}	
 		
 		redirectStrategy.sendRedirect(request, response, "/VITproject/shop");
