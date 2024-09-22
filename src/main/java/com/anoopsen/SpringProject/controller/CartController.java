@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.Product;
 import com.anoopsen.SpringProject.service.CartService;
+import com.anoopsen.SpringProject.service.CryptoService;
 import com.anoopsen.SpringProject.service.ProductService;
 
 @Controller
@@ -29,12 +30,15 @@ public class CartController {
 	@Autowired
 	CartService cartService;
 	
+	@Autowired
+	CryptoService cryptoService;
+	
 	@GetMapping(value="/cart")
 	public String cartGet(Model model) {
-		//TODO: Fetch cart from DB after dynamically updating total and products----
 		Cart cart = cartService.getAuthenticatedUserCart();
+		double total = cartService.getCartTotal();
+		
 		model.addAttribute("cartCount", cart.getProducts().size());
-		Double total = cartService.getCartTotal();
 		model.addAttribute("total", total);
 		model.addAttribute("cart", cart.getProducts());
 		return "cart";
@@ -52,16 +56,21 @@ public class CartController {
 		return "redirect:/VITproject/cart";
 	}
 	
-	/*@GetMapping(value="/checkout")
+	@GetMapping(value="/checkout")
 	public String checkout(Model model, RedirectAttributes redirectAttributes) {
-	    if(Cart.cart.isEmpty()) {
-	    	logger.info("Cart is Empty?: "+Cart.cart.isEmpty());
+		boolean cartEmpty = cartService.isCartEmpty();
+		double total;
+		double ethToInrRate;
+		if(cartEmpty) {
+	    	logger.info("Cart is Empty?: "+cartEmpty);
 	        redirectAttributes.addFlashAttribute("error_message", "Sorry, your cart is empty");
 	        return "redirect:/VITproject/cart";	
 	    }
-	    
-	    Double total = Cart.cart.stream().mapToDouble(product -> product.getPrice()).sum();
+		total = cartService.getCartTotal();
+		ethToInrRate = cryptoService.getEthToInrRate(); //fetches real-time Ether(ETH) to INR 
+		model.addAttribute("cartCount", cartService.getCartCount());
 		model.addAttribute("total", total);
+		model.addAttribute("eth_inr_rate", ethToInrRate);
 		return "checkout";
-	}*/
+	}
 }

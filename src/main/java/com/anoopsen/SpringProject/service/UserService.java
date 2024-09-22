@@ -65,6 +65,20 @@ public class UserService {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("An error occurred while creating the user.");
 		}
 	}
+
+	public boolean verifyPassword(String password){
+		String capitalLetterRegex = ".*[A-Z].*";
+		String lowerLetterRegex = ".*[a-z].*";
+		String numberRegex = ".*[0-9].*";
+		String specialCharRegex = ".*[!@#$%].*";
+		
+		boolean test1 = password.length() >= 8;
+		boolean test2 = password.matches(capitalLetterRegex) && password.matches(lowerLetterRegex);
+		boolean test3 = password.matches(numberRegex);
+		boolean test4 = password.matches(specialCharRegex);
+		
+		return test1 && test2 && test3 && test4;
+	}
 	
 	public List<User> getAllUsers(){
 		return userRepo.findAll();

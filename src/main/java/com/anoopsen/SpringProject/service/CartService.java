@@ -66,6 +66,9 @@ public class CartService {
 	        });
 	}
 
+	public boolean isCartEmpty() {
+		return this.getAuthenticatedUserCart().getProducts().isEmpty();
+	}
 	
 	public void createEmptyCart(User user) {
 		Cart cart = new Cart();

@@ -117,7 +117,7 @@
                     <div class="card mb-4">
                         <div class="card-body">
 
-                            <h5 class="mb-3">The total amount </h5>
+                            <h5 class="mb-3">Total Amount </h5>
 
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
@@ -139,8 +139,7 @@
                                 </li>
                             </ul>
 
-                            <a th:href="@{/VITproject/checkout}" class="btn btn-primary btn-block waves-effect waves-light">go to
-                                checkout</a>
+                            <a id="checkoutButton" th:href="@{/VITproject/checkout}" class="btn btn-primary btn-block waves-effect waves-light">Checkout</a>
 
                         </div>
                     </div>
@@ -184,7 +183,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p th:if="${error_message != null}" th:text="${error_message}">Your cart is empty!</p>
+                <p th:if="${error_message != null}" th:text="${error_message}">Cannot proceed to checkout. Your cart is empty.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -193,22 +192,24 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        // Check if the error_message exists
+		$('#checkoutButton').on('click', function(event){
+	        let hasErrorMessage = [[${error_message != null}]];
+	        if (hasErrorMessage) {
+				event.preventDefault();
+	            $('#cartEmptyModal').modal('show');
+	        }
+		});
+    });
+</script>
 <!-- Bootstrap-Select JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldjDDvf6ntkA6B1QYZZjRFpurt9TtB6UJm1wDXg" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-3qaqj0lcgkHh7uWfhA5MXvLIbK39YzuFHz53CLxZCrq3GmC5iT9u0NQBeinVGAaI" crossorigin="anonymous"></script>
-
-<script>
-    $(document).ready(function() {
-        // Check if the error_message exists
-        let hasErrorMessage = [[${error_message != null}]];
-        if (hasErrorMessage) {
-            $('#cartEmptyModal').modal('show');
-        }
-    });
-</script>
 
 </body>
 </html>
