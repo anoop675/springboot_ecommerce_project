@@ -54,11 +54,12 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
-		</dependency>
+		</dependency>-->
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 		    <groupId>org.projectlombok</groupId>
@@ -107,7 +108,16 @@
 		    <artifactId>twilio</artifactId>
 		    <version>7.34.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.amazonaws</groupId>
+		    <artifactId>aws-java-sdk-personalize</artifactId>
+		    <version>1.12.772</version>
+		</dependency>
 	</dependencies>
 
 	<build>

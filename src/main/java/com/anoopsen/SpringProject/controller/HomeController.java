@@ -23,6 +23,7 @@ import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.service.CartService;
 import com.anoopsen.SpringProject.service.CategoryService;
 import com.anoopsen.SpringProject.service.ProductService;
+import com.anoopsen.SpringProject.service.UserService;
 
 @Controller
 @RequestMapping(value="/VITproject")
@@ -39,25 +40,19 @@ public class HomeController {
 	@Autowired
 	CartService cartService;
 	
+	@Autowired
+	UserService userService;
+	
 	@GetMapping(value="/shop")
 	public String home(Model model) {
-	    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //get principal (authenticated user)
-
-	    // Check if the user is authenticated via OAuth2
-	    if (principal instanceof DefaultOidcUser) {
-	        DefaultOidcUser oidcUser = (DefaultOidcUser) principal;
-	        String firstName = oidcUser.getGivenName(); // "given_name" is attribute provided by Google Console
-	        model.addAttribute("firstname", firstName);
-	    } 
-	    // Check if the user is authenticated as a traditional user
-	    else if (principal instanceof User) {
-	        User user = (User) principal;
-	        model.addAttribute("firstname", user.getFirstName());
-	    }
+		
+		String firstName = userService.getAuthenticatedUserFirstName();
+		
+		model.addAttribute("firstname", firstName);
 	    
 	    logger.info(SecurityContextHolder.getContext().getAuthentication().toString());
-	    model.addAttribute("cartCount", cartService.getCartCount());
 	    
+	    model.addAttribute("cartCount", cartService.getCartCount());
 	    model.addAttribute("categories", category_service.getAllCategory());
 		model.addAttribute("products", product_service.getAllProduct());
 		//model.addAttribute("cartCount", Cart.cart.size());
@@ -67,6 +62,12 @@ public class HomeController {
 	
 	@GetMapping(value="/shop/category/{id}")
 	public String shopByCategory(@PathVariable int id, Model model) {
+		
+		String firstName = userService.getAuthenticatedUserFirstName();
+		
+		model.addAttribute("firstname", firstName);
+	    model.addAttribute("cartCount", cartService.getCartCount());
+	   
 		List<Category> categories = category_service.getAllCategory();
 		List<Product> productsByCategory = product_service.getAllProductByCategoryId(id);
 		
@@ -82,6 +83,7 @@ public class HomeController {
 		
 		model.addAttribute("product", product);
 		model.addAttribute("cartCount", cartService.getCartCount());
+		model.addAttribute("productRating", product.getAverageRating());
 		
 		return "viewProduct";
 	}

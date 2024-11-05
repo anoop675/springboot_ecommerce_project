@@ -16870,3 +16870,25 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/anoop/O
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 174 more
+2024-09-22 21:27:54.092181+05:30 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM CART_TABLE"; expected "identifier"; SQL statement:
+DELETE * FROM CART_TABLE [42001-224]
+2024-09-22 21:28:00.124166+05:30 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DELETE [*]* FROM CART_TABLE"; expected "identifier"; SQL statement:
+DELETE * FROM CART_TABLE [42001-224]
+2024-09-25 15:34:24.144069+05:30 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP TABLE[*]"; expected "identifier"; SQL statement:
+DROP TABLE [42001-224]
+2024-09-25 15:34:30.260542+05:30 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP TABLE [*]*"; expected "identifier"; SQL statement:
+DROP TABLE * [42001-224]
+2024-09-25 15:34:34.156246+05:30 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP TABLE [*]*"; expected "identifier"; SQL statement:
+DROP TABLE * [42001-224]
+2024-09-25 22:53:08.933745+05:30 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CART" not found; SQL statement:
+SELECT * 
+FROM USERS JOIN CART 
+ON USERS.user_id = CART.user_id
+JOIN CART_PRODUCT
+ON CART.cart_id = CART_PRODUCT.cart_id [42102-224]

@@ -22,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.anoopsen.SpringProject.dto.ProductDto;
 import com.anoopsen.SpringProject.model.Product;
 import com.anoopsen.SpringProject.model.Product.ProductBuilder;
+import com.anoopsen.SpringProject.model.ProductRating;
 import com.anoopsen.SpringProject.repository.ProductRepo;
+import com.anoopsen.SpringProject.repository.RatingRepository;
 import com.anoopsen.SpringProject.dto.ProductDto.ProductDtoBuilder;
 
 @Service
@@ -31,6 +33,9 @@ public class ProductService {
 	
 	@Autowired
 	ProductRepo product_repository;
+	
+	@Autowired
+	RatingRepository ratingRepo;
 	
 	@Autowired
 	CategoryService category_service;
@@ -111,7 +116,16 @@ public class ProductService {
 											   .imageName(imageUUID);
 		
 		Product product = productBuilder.build();
+		
 		product_repository.save(product);
+		
+		ProductRating defaultRating = new ProductRating();
+	    defaultRating.setProduct(product);
+	    defaultRating.setUser(null); // No user assigned
+	    defaultRating.setRating(0.0); // Initial rating is 0
+
+	    ratingRepo.save(defaultRating);		
+		
 		return ResponseEntity.status(HttpStatus.OK).body("Product added successfully!");
 	}
 	

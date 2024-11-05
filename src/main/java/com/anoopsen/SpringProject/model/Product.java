@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,14 +25,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Product {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.SEQUENCE)
 	@Column(name="product_id", length=250, unique=true)
 	private int id;
 	
 	@Column(name="product_name", length=200, unique=false)
 	private String name;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="category_id", referencedColumnName="category_id")
 	//@Column(name="product_category", length=200, unique=false)
 	private Category category;
@@ -48,6 +49,22 @@ public class Product {
 	@Column(name="product_image_name", length=250, unique=false)
 	public String imageName;
 	
+	/* as CartProduct join table is defined in model
 	@ManyToMany(mappedBy = "products", cascade = CascadeType.MERGE, fetch = FetchType.EAGER) //FetchType.LAZY
-    private List<Cart> carts;
+    private List<Cart> carts;*/
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<CartProduct> cartProducts;
+	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ProductRating> productRatings;
+
+    // Method to calculate average rating
+    public double getAverageRating() {
+        return (!productRatings.isEmpty()) 
+        		? productRatings.stream()
+        				.mapToDouble(ProductRating::getRating)
+        				.average()
+        				.orElse(0.0) 
+        		: 0.0;
+    }
 }

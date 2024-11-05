@@ -25,7 +25,6 @@ import com.anoopsen.SpringProject.repository.UserRepository;
 import com.anoopsen.SpringProject.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/VITproject")
@@ -60,7 +59,7 @@ public class LoginController {
 		String password = user.getPassword();
 		if(!userService.verifyPassword(password)) {
 			logger.info("Invalid password entered.");
-			redirectAttributes.addFlashAttribute("errorMessage", "Invalid password entered."); // If there's a conflict (user already exists), show an error message
+			model.addAttribute("errorMessage", "Invalid password entered."); // If there's a conflict (user already exists), show an error message
 			return "register";
 		}
 		

@@ -154,6 +154,9 @@
 <div class="container" style="padding-top: 70px; margin-top: 10px">
     <div class="register-box">
         <h2>Register</h2>
+		<div th:if="${errorMessage != null}">
+		    <p th:text="${errorMessage}" style="color: red;"></p>
+		</div>
         <form th:action="@{/VITproject/register}" method="post">
 			
 			<div class="form-group">
@@ -199,7 +202,8 @@
     </div>
 </div>
 
-<!--Registration Error Modal-->
+<!--
+Registration Error Modal
 <div class="modal fade" id="regErrorModal" tabindex="-1" role="dialog" aria-labelledby="regErrorModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -209,7 +213,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" th:text="${errorMessage}">
         Registration Error, Please try again.
       </div>
       <div class="modal-footer">
@@ -217,7 +221,7 @@
       </div>
     </div>
   </div>
-</div>
+</div>-->
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
@@ -256,28 +260,27 @@
         criteria.special.className = /[!@#$%^&*(),.?":{}|<>]/.test(password) ? 'valid' : 'invalid';
     }
 </script>
-
-<!-- trigger if present -->
+<!-- trigger if present-->
 <script>
-    function validateForm() {
-        var errorMessage = "[[${errorMessage != null ? errorMessage : ''}]]"; // Set empty string if no error
-		console.log("Error message:", errorMessage);
+	    function validateForm() {
+	        var errorMessage = /*[[${errorMessage}]]*/ '';  // Safely handle empty or undefined error message
+			console.log("Error message:", errorMessage);
 
-        if (errorMessage !== "") {
-            $('#regErrorModal').modal('show');
-        } else {
-            // No error, submit the form
-            document.querySelector('form').submit();
-        }
-    }
-
+	        if (errorMessage && errorMessage.trim() !== "") { // Check if errorMessage is not empty
+	            $('#regErrorModal').modal('show'); // Show the modal if there's an error message
+	        } else {
+	            // No error, submit the form
+	            document.querySelector('form').submit();
+	        }
+	    }
+	/*
     // Show modal automatically on page load if errorMessage exists
     $(document).ready(function(){
         var errorMessageOnLoad = "[[${errorMessage != null ? errorMessage : ''}]]";
-        if (errorMessageOnLoad !== "") {
+        if (errorMessageOnLoad !== "") {S
             $('#regErrorModal').modal('show');
         }
-    });
+    });*/
 </script>
 </body>
 </html>

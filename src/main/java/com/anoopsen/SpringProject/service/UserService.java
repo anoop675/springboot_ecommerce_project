@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Service;
 
 import com.anoopsen.SpringProject.config.PasswordEncoderConfig;
@@ -35,8 +37,8 @@ public class UserService {
 	@Autowired
 	CartService cartService;
 	
+	
 	public ResponseEntity<String> createUser(User user, String password, List<Role> roles) throws Exception{
-		
 		try {
 			
 			if(userRepo.findUserByEmail(user.getEmail()).isPresent()) {
@@ -54,14 +56,21 @@ public class UserService {
 			user.setOauth2User(false);
 		
 			userRepo.save(user);
-			//create an Empty cart simultaneously
+			/*
+			create an Empty cart simultaneously (when Cart had Products)
 			cartService.createEmptyCart(user);
+			*/
+			cartService.createEmptyCart(user);
+			
+			
 			logger.info("cart created");
 			
 			logger.info("User: "+user.getFirstName()+"with email: "+user.getEmail()+", is registered successfully");
 			return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully.");
 
 		} catch (Exception e) {
+			logger.info(e.getMessage());
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("An error occurred while creating the user.");
 		}
 	}
@@ -77,7 +86,25 @@ public class UserService {
 		boolean test3 = password.matches(numberRegex);
 		boolean test4 = password.matches(specialCharRegex);
 		
+		logger.info("Password: "+password+" is valid?: "+String.valueOf(test1 && test2 && test3 && test4));
+		
 		return test1 && test2 && test3 && test4;
+	}
+	
+	public String getAuthenticatedUserFirstName() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //get principal (authenticated user)
+		String firstName = "";
+	    // Check if the user is authenticated via OAuth2
+	    if (principal instanceof DefaultOidcUser) {
+	        DefaultOidcUser oidcUser = (DefaultOidcUser) principal;
+	        firstName = oidcUser.getGivenName(); // "given_name" is attribute provided by Google Console
+	    } 
+	    // Check if the user is authenticated as a traditional user
+	    else if (principal instanceof User) {
+	        User user = (User) principal;
+	        firstName = user.getFirstName();
+	    }
+	    return firstName;
 	}
 	
 	public List<User> getAllUsers(){

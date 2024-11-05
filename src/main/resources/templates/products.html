@@ -93,7 +93,7 @@
                 <th scope="row" th:text="${iStat.index + 1}"><!----></th>
                 <td th:text="${product.name}"><!----></td>
                 <!--<td th:text="${product.category.name}"></td>-->
-                <td th:text="${product.category != null ? product.category.name : 'No Category'}"><!----></td>
+				<td th:text="${product != null && product.category != null ? product.category.name : 'No Category'}"></td>
                 <td><img src="" height="100px" width="100px"  th:src="@{${'/productImages/' + product.imageName}}"></td>
     
                 <td><a href="" th:href="@{/VITproject/admin/products/delete/{id}(id=${product.id})}" class="btn btn-danger" data-toggle="modal" data-target="#cancelModal">Delete</a></td>

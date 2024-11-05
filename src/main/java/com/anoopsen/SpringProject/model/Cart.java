@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
 
@@ -19,7 +20,7 @@ import lombok.Data;
 @Data
 public class Cart {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "cart_id", nullable = false, unique = true)
     private int id;
 	
@@ -29,7 +30,8 @@ public class Cart {
 	@OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
-
+	
+	/* Join Table is CartProduct as 'quantity' attribute is needed
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable( // Creates the join table for Cart and Product
         name = "cart_product",
@@ -40,5 +42,9 @@ public class Cart {
             @JoinColumn(name = "product_id", referencedColumnName = "product_id")
         }
     )
-    private List<Product> products;
+    private List<Product> products;*/
+	
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	private List<CartProduct> cartProducts;
+
 }
