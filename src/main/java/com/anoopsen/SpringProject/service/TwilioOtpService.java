@@ -8,13 +8,17 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.anoopsen.SpringProject.config.TwilioConfig;
+import com.anoopsen.SpringProject.controller.LoginController;
 import com.anoopsen.SpringProject.model.OtpStatus;
+import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.dto.PasswordResetRequestDto;
 import com.anoopsen.SpringProject.dto.PasswordResetResponseDto;
 import com.twilio.rest.api.v2010.account.Message;
@@ -24,8 +28,13 @@ import com.twilio.type.PhoneNumber;
 @Service
 public class TwilioOtpService {
 	
+	Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Autowired
 	TwilioConfig twilioConfig;
+	
+	@Autowired
+	UserService userService;
 	
 	private Map<String, String> otpMap = new HashMap<>();   //Not using a DB to store otp, using a hashmap. In real-application otp is stored which is mapped with the user's username
 
@@ -34,18 +43,23 @@ public class TwilioOtpService {
 	Long startTime = null;
 	Long endTime = null;
 	
-	public PasswordResetResponseDto sendOtp(PasswordResetRequestDto request) {
+	public PasswordResetResponseDto sendOtp(String email) {
 		//This code will define the OTP sending logic
 		
 		PasswordResetResponseDto response = null;
 		
 		try {
 			
+			User user = userService.getUser(email);
+			
 			PhoneNumber sender = new PhoneNumber(twilioConfig.getTrialNumber());
-			PhoneNumber receiver = new PhoneNumber(request.getMyPhoneNumber());
+			PhoneNumber receiver = new PhoneNumber("+91 "+user.getPhoneNum());
 			
 			String otp = generateOtp();
-			String otpMessage = "Hi "+request.getUserName()+", Your OTP is "+otp+". Use this OTP to complete your password reset request. This OTP expires in "+(expirationTimeInMillis/(1000*60))+" minutes. Thank you.";
+			
+			logger.info(otp);
+			
+			String otpMessage = "Hi "+user.getFirstName()+", Your OTP is "+otp+". Use this OTP to complete your password reset request. This OTP expires in "+(expirationTimeInMillis/(1000*60))+" minutes. Thank you.";
 			
 			//logic to send OTP to receiptant's phone number via Twilio API
 			//-------------------------------------------------------------
@@ -58,8 +72,8 @@ public class TwilioOtpService {
 			//-------------------------------------------------------------
 			
 			//saving otp for user in a hash-map
-			otpMap.put(request.getUserName(), otp);
-			
+			otpMap.put(user.getFirstName(), otp);
+			System.out.println(otpMap);			
 			startTime = System.currentTimeMillis();  
 			
 			response = new PasswordResetResponseDto(
@@ -72,6 +86,7 @@ public class TwilioOtpService {
 			response = new PasswordResetResponseDto(
 						OtpStatus.FAILED,
 						"Otp could not be sent due to this issue: "+e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return response;

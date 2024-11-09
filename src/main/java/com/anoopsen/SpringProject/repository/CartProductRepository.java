@@ -19,5 +19,9 @@ public interface CartProductRepository extends JpaRepository<CartProduct, Intege
 	 @Modifying
 	 @Query("DELETE FROM CartProduct cp WHERE cp.id = :id")
 	 void deleteCartProductById(@Param("id") int id);
+	 
+	 @Modifying
+	 @Query("DELETE FROM CartProduct cp WHERE cp.cart.id = :cartId")
+	 void deleteByCartId(@Param("cartId") int cartId);
 }
 

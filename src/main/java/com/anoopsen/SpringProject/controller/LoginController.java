@@ -13,15 +13,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.anoopsen.SpringProject.config.PasswordEncoderConfig;
+import com.anoopsen.SpringProject.dto.PasswordResetDto;
+import com.anoopsen.SpringProject.dto.PasswordResetRequestDto;
+import com.anoopsen.SpringProject.dto.PasswordResetResponseDto;
+import com.anoopsen.SpringProject.model.OtpStatus;
 import com.anoopsen.SpringProject.model.Role;
 import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.repository.RoleRepository;
 import com.anoopsen.SpringProject.repository.UserRepository;
+import com.anoopsen.SpringProject.service.TwilioOtpService;
 import com.anoopsen.SpringProject.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +41,9 @@ public class LoginController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	TwilioOtpService twilioOtpService;
 	
 	@GetMapping(value="/login")
 	public String login() {
@@ -82,9 +92,85 @@ public class LoginController {
 	    }
 	}
 	
-	//@GetMapping(value="/forgotPassword")
-	//public String forgotPassword(Model model) {
-		
-	//}
+	@GetMapping(value="/forgotPassword")
+	public String forgotPassword(Model model) {
+		model.addAttribute("message", "Please provide your registered email id");
+		return "forgotPassword";
+	}
+	/*
+	@GetMapping(value="/otp")
+	public String getOtpPage(Model model) {
+		model.addAttribute("dto", new PasswordResetRequestDto());
+		return "otp";
+	}*/
 	
+	@PostMapping(value="/forgotPassword")
+	public String forgotPassword(@RequestParam String email, Model model) {
+	    User user = userService.getUser(email);
+	    String thisPage = "";
+	    if (user == null) {
+	        model.addAttribute("errorMessage", "User is not found");
+	        thisPage = "forgotPassword";
+	    } 
+	    else {
+	    	PasswordResetResponseDto dto = twilioOtpService.sendOtp(email);
+	    	if(dto.getStatus().equals(OtpStatus.DELIVERED)) {
+		    	String formattedPhoneNumber = "+91 " + user.getPhoneNum().substring(0, 2) + "*****" + user.getPhoneNum().substring(7);
+		    	model.addAttribute("message", "An OTP has been sent to your registered number " + formattedPhoneNumber + " via SMS");
+		    	model.addAttribute("email", email);  // Send email for later use in OTP verification
+		    	PasswordResetRequestDto dto2 = new PasswordResetRequestDto();
+		    	dto2.setEmail(email);
+		    	dto2.setOtp("");
+		    	model.addAttribute("dto2", dto2);
+		        thisPage = "otp";  // Redirect to OTP verification page
+
+	    	}
+	    	else if(dto.getStatus().equals(OtpStatus.FAILED)) {
+	    		model.addAttribute("errorMessage", "Failed to send OTP to registered number");
+	    		 thisPage = "forgotPassword"; 
+	    	}
+	    }
+	    return thisPage;
+	}
+	
+	
+	@PostMapping("/verifyOTP") //GET is not supported (i.e if we type /VITproject/verifyOTP). this makes it secure from unauthorized access
+	public String verifyOtp(@ModelAttribute("dto") PasswordResetRequestDto prrd, Model model) {
+	    String email = prrd.getEmail();
+	    String otp = prrd.getOtp();
+
+	    logger.info("verifyOtp() in controller called, received email: " + email + " and otp: " + otp);
+
+	    ResponseEntity<String> status = twilioOtpService.validateOtp(otp, userService.getUser(email).getFirstName());
+
+	    if (status.getStatusCode().equals(HttpStatus.OK)) {
+	        logger.info("Entered otp: " + otp + " is valid");
+	        PasswordResetDto dto3 = new PasswordResetDto();
+	        dto3.setEmail(email);
+	        dto3.setNewPassword("");
+	        dto3.setConfirmPassword("");
+	        model.addAttribute("dto3", dto3);
+	        return "resetPassword";
+	    } else {
+	        logger.info("Entered otp: " + otp + " is invalid");
+	        model.addAttribute("errorMessage", "Invalid OTP entered, Please try again");
+	        return "otp";
+	    }
+	}
+	
+	@PostMapping("/resetPassword")   //GET is not supported (i.e if we type /VITproject/resetPassword). this makes it secure from unauthorized access
+	public String resetPassword(@ModelAttribute("dto3") PasswordResetDto prd, Model model) {
+		String email = prd.getEmail();
+	    String newPwd = prd.getNewPassword();
+	    String confirmPwd = prd.getConfirmPassword();
+
+	    if (newPwd.equals(confirmPwd)) {
+	        logger.info("passwords are a match");
+	        userService.resetPassword(email, newPwd);
+	        return "login";
+	    } else {
+	        model.addAttribute("errorMessage", "Invalid password entered, Please try again");
+	        return "resetPassword";
+	    }
+	}
 }

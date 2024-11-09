@@ -7,9 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.anoopsen.SpringProject.config.PasswordEncoderConfig;
@@ -91,6 +94,40 @@ public class UserService {
 		return test1 && test2 && test3 && test4;
 	}
 	
+	public User getAuthenticatedUser() throws Exception {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    
+	    if (authentication != null) {
+	        Object principal = authentication.getPrincipal();
+	        
+	        // Check if principal is an instance of OidcUser (OAuth2/OpenID Connect user)
+	        if (principal instanceof OidcUser) {
+	            OidcUser oidcUser = (OidcUser) principal;
+	            String email = oidcUser.getEmail();  // Or use another identifier like 'sub'
+	            
+	            // Fetch user from your database (you might use email or other identifiers)
+	            User user = userRepo.findUserByEmail(email).orElseThrow(() -> new Exception("User not found"));
+	            return user;
+	        }
+	        
+	        // Check if principal is an instance of OAuth2User (for general OAuth2 authentication)
+	        else if (principal instanceof OAuth2User) {
+	            OAuth2User oauth2User = (OAuth2User) principal;
+	            String email = oauth2User.getAttribute("email");  // Replace with appropriate attribute
+	            
+	            // Fetch user from your database
+	            User user = userRepo.findUserByEmail(email).orElseThrow(() -> new Exception("User not found"));
+	            return user;
+	        }
+	        
+	        // If it's a simple user (e.g., in-memory authentication)
+	        else if (principal instanceof User) {
+	            return (User) principal;
+	        }
+	    }
+	    return null; // Return null if not authenticated
+	}
+	
 	public String getAuthenticatedUserFirstName() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //get principal (authenticated user)
 		String firstName = "";
@@ -111,8 +148,28 @@ public class UserService {
 		return userRepo.findAll();
 	}
 	
+	public User getUser(int id) {
+		return userRepo.findById(id)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+	}
+	
+	public void addUser(User user) {
+		userRepo.save(user);
+	}
+	public User getUser(String email) {
+		return userRepo.findUserByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+	}
+	
 	public void removeUser(int id) {
+		cartService.deleteCartById(this.getUser(id).getCart().getId());
 		userRepo.deleteById(id);
+	}
+	
+	public void resetPassword(String email, String newPwd){
+		User user = getUser(email);
+		user.setPassword(pwdEncoder.passwordEncoder().encode(newPwd));
+		userRepo.save(user); //JPA updates existing user's pwd
 	}
 
 }

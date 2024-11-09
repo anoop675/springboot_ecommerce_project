@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PasswordResetRequestDto {
-
+public class PasswordResetDto {
+	
 	private String email;
 	
-	private String otp;
+	private String newPassword;
+	
+	private String confirmPassword;
 }
-

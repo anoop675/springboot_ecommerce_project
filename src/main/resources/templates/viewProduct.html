@@ -46,7 +46,28 @@
 			    max-width: 200px; /* Adjust this value to control the width */
 			    width: auto; /* Ensure the width adjusts to max-width */
 			}
+			.custom-spacing .btn + .btn {
+			    margin-left: 1rem; /* Adjust the value as needed */
+			}
+			/* General styles for the star rating container */
+			.star-rating {
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			}
 
+			/* Basic star styles */
+			.star {
+			  font-size: 4rem; /* default size */
+			  color: #ccc; /* gray color for unselected stars */
+			  cursor: pointer;
+			  transition: color 0.2s, font-size 0.2s;
+			}
+
+			/* Style for selected stars to make them gold */
+			.star.selected {
+			  color: #FFD700; /* gold color for selected stars */
+			}
 	</style>
 </head>
 <body>
@@ -83,8 +104,7 @@
 <div class="container mt-5">
     <div class="row">
         <div class="col-sm-5 d-flex justify-content-center">
-            <img class="image" height="300px" width="300px" src="" th:src="@{${'/productImages/' + product.imageName}}"
-                 alt="">
+            <img class="image" height="300px" width="300px" src="" th:src="@{${'/productImages/' + product.imageName}}" alt="">
         </div>
         <div class="col-sm-7 mt-5">
             <h2 th:text="${product.name}"></h2>
@@ -93,26 +113,93 @@
             <h5>Weight:
                 <span th:text="${product.weight}"></span> grams.
             </h5>
-			<p>Description: 
-            	<span th:text="${product.description}" style="margin-top: 20px"></span>
-			</p>
-			<div class="rating">
-			    <span>Rating:</span>
-			    <span th:each="i : ${#numbers.sequence(1, 5)}">
-			        <i class="fa" 
-			           th:classappend="${i <= productRating} ? 'fa-star' : 'fa-star-o'"></i>
-			    </span>
-			</div>
+            <p>Description: 
+                <span th:text="${product.description}" style="margin-top: 20px"></span>
+            </p>
+            <div class="rating">
+                <span>Rating:</span>
+                <span th:each="i : ${#numbers.sequence(1, 5)}">
+                    <i class="fa" th:classappend="${i <= productRating} ? 'fa-star' : 'fa-star-o'"></i>
+                </span>
+            </div>
 
-			<!-- Wrap buttons in a flex container -->
-			<div class="d-flex justify-content-start mt-3">
-			    <a href="" th:href="@{/VITproject/addToCart/{id}(id=${product.id})}" class="btn btn-primary me-2">Add to cart</a>
-			    <a href="" th:href="@{/VITproject/anotherAction/{id}(id=${product.id})}" class="btn btn-secondary">Rate this product</a>
-			</div>
-
+            <!-- Wrap buttons in a flex container -->
+            <div class="d-flex justify-content-start mt-3 custom-spacing">
+                <a href="" th:href="@{/VITproject/addToCart/{id}(id=${product.id})}" class="btn btn-primary me-4">Add to cart</a>
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#rateProductModal">Rate this product</button>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Modal for Rating -->
+<div class="modal fade" id="rateProductModal" tabindex="-1" aria-labelledby="rateProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rateProductModalLabel">Rate Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Star Rating System -->
+                <div id="starRating" class="star-rating">
+                    <span class="star" data-value="1">&#9733;</span>
+                    <span class="star" data-value="2">&#9733;</span>
+                    <span class="star" data-value="3">&#9733;</span>
+                    <span class="star" data-value="4">&#9733;</span>
+                    <span class="star" data-value="5">&#9733;</span>
+                </div>
+                <input type="hidden" id="selectedRating" name="rating" value="0">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary" onclick="submitRating()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include JS for Rating Selection -->
+<script>
+    // Star click event to set selected rating
+    document.querySelectorAll('#starRating .star').forEach((star, index) => {
+        star.addEventListener('click', function() {
+            // Set selected rating
+            document.getElementById('selectedRating').value = this.getAttribute('data-value');
+            
+            // Remove selected class from all stars and add it up to the clicked one
+            document.querySelectorAll('#starRating .star').forEach((s, i) => {
+                s.classList.toggle('selected', i <= index);
+            });
+        });
+    });
+
+    // Submit rating function
+    function submitRating() {
+        const rating = document.getElementById('selectedRating').value;
+        if (rating === "0") {
+            alert("Please select a rating.");
+            return;
+        }
+        // Construct URL with rating
+        const productId = /* Use Thymeleaf to set the product ID here */ [[${product.id}]];
+        const url = `/VITproject/rate/${productId}/${rating}`;
+        window.location.href = url;
+    }
+</script>
+
+<style>
+    .star {
+        cursor: pointer;
+        color: gray;
+    }
+    .star.selected, .star:hover {
+        color: gold;
+    }
+</style>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -126,5 +213,7 @@
 
 <!-- Bootstrap-Select JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+
+
 </body>
 </html>

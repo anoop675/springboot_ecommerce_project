@@ -17,12 +17,12 @@ public class ProductRating {
     private int id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false)
     private Product product;
-
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = true)
-    private User user;
 
     @Column(name = "rating", nullable = false)
     private double rating;

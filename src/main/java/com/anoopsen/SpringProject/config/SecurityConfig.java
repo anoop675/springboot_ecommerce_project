@@ -35,6 +35,8 @@ public class SecurityConfig{
 	@Value("${rememberMe.privateKey}")
 	private String rememberMePrivateKey; //Use @Value to load the Remember-Me private key from a configuration file instead of hard coding it in the code
 	
+	final String rememberMeCookieName = "remember-me";
+	
 	@Autowired
 	@Lazy
     CustomUserDetailsService customUserDetailsService;
@@ -61,11 +63,13 @@ public class SecurityConfig{
 					httpRequest
 								.requestMatchers("/resources/**", "/static/**", "/images/**", "/productImages/**", "/css/**", "/js/**",
 										"/lottie.host/7401522f-2d8b-4049-ad18-eb0edb6af224/CE9lFrNlEH.json").permitAll()
-								.requestMatchers(new AntPathRequestMatcher("/VITproject")).permitAll()
-								//.requestMatchers(new AntPathRequestMatcher("/VITproject/shop/**")).permitAll()
+								//.requestMatchers(new AntPathRequestMatcher("/VITproject/**")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/VITproject/login")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/VITproject/verifyOTP")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject/forgotPassword")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject/register")).permitAll()
-								//.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/VITproject/resetPassword")).permitAll()
+								.requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/postgres/**")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/oauth2/authorization/google")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject/admin/**")).hasRole("ADMIN")
@@ -131,8 +135,6 @@ public class SecurityConfig{
         	.userDetailsService(customUserDetailsService)
         	.passwordEncoder(pwdEncoder.passwordEncoder());
     }
-	
-final String rememberMeCookieName = "remember-me";
 	
 	@Bean
 	public RememberMeAuthenticationFilter rememberMeFilter(AuthenticationManager authenticationManager) throws Exception {

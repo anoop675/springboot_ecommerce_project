@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <title>Register - E-commerce Shop</title>
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+		.navbar-blue {
+		    background-color: #007bff; /* Blue background */
+		}
+		.navbar-blue .navbar-brand,
+		.navbar-blue .nav-link {
+		    color: #ffffff; /* White text */
+		}
+		.navbar-blue .nav-link.active {
+		    color: #ffffff; /* White text for active link */
+		}
+		/* Custom CSS for positioning and sizing the dropdown menu */
+		.navbar .dropdown-menu {
+		    right: -10px; /* Adjust this value to add spacing from the right */
+		    left: auto; /* Prevent auto left positioning */
+		    max-width: 200px; /* Adjust this value to control the width */
+		    width: auto; /* Ensure the width adjusts to max-width */
+		}
+		/* Center the registration box using Flexbox */
+		        .container {
+		            display: flex;
+		            justify-content: center;
+		            align-items: center;
+		            height: 100vh;
+		        }
+
+		        .register-box {
+		            width: 400px;
+		            padding: 30px;
+		            background-color: white;
+		            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		            border-radius: 8px;
+		        }
+
+		        .register-box h2 {
+		            margin-bottom: 20px;
+		        }
+
+		        .form-group {
+		            position: relative;
+		            margin-bottom: 1.5rem; /* Reduced margin */
+		        }
+
+		        .form-group input {
+		            width: 100%;
+		            padding: 10px;
+		            font-size: 1.2rem;
+		            background: none;
+		            border: 1px solid #ccc;
+		            border-radius: 4px;
+		        }
+
+		        .form-group label {
+		            position: absolute;
+		            top: 12px;
+		            left: 12px;
+		            background-color: white;
+		            padding: 0 5px;
+		            color: #777;
+		            font-size: 1.2rem;
+		            transition: 0.2s ease-in-out;
+		            pointer-events: none;
+		        }
+
+		        .form-group input:focus + label,
+		        .form-group input:not(:placeholder-shown) + label {
+		            top: -10px;
+		            left: 10px;
+		            font-size: 0.8rem;
+		            color: #007bff;
+		        }
+
+		        .form-group input:focus {
+		            border-color: #007bff;
+		        }
+	</style>
+</head>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-blue fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <!--<img th:src="@{/images/logo.png}"  src="../static/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>-->
+            <h3 width="auto" height="40" class="d-inline-block align-top" alt="">E-commerce Shop</h3>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+	</div>
+</nav>
+<!-- OTP Verification Form -->
+<div class="container" style="padding-top: 70px; margin-top: 10px">
+    <div class="register-box">
+        <h2>Enter OTP</h2>
+        <div th:if="${errorMessage != null}">
+            <p th:text="${errorMessage}" style="color: red;"></p>
+        </div>
+		<div th:if="${message != null}">
+		    <p th:text="${message}" style="color: green;"></p>
+		</div>
+		<!-- Show email if passed as a model attribute
+		        <div th:if="${email != null}">
+		            <p><strong>Email: </strong><span th:text="${email}"></span></p>
+		        </div>-->
+        <!--Form to submit OTP for verification -->
+		<form th:action="@{/VITproject/verifyOTP}" th:object="${dto2}" method="post">
+		    <!-- Hidden input to bind the email field in PasswordResetRequestDto-->
+		    <input type="hidden" th:field="*{email}" id="email"/>
+		    <div class="form-group">
+		        <input type="text" th:field="*{otp}" id="otp" placeholder=" " class="form-control form-control-lg" required>
+		        <label for="otp">Enter OTP</label>
+		    </div>
+
+		    <button type="submit" class="btn btn-primary btn-block">Continue</button>
+		</form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</body>
+</html>	

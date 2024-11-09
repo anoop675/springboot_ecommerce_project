@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.anoopsen.SpringProject.model.Category;
@@ -23,6 +24,7 @@ import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.service.CartService;
 import com.anoopsen.SpringProject.service.CategoryService;
 import com.anoopsen.SpringProject.service.ProductService;
+import com.anoopsen.SpringProject.service.RatingService;
 import com.anoopsen.SpringProject.service.UserService;
 
 @Controller
@@ -42,6 +44,9 @@ public class HomeController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	RatingService ratingService;
 	
 	@GetMapping(value="/shop")
 	public String home(Model model) {
@@ -83,8 +88,19 @@ public class HomeController {
 		
 		model.addAttribute("product", product);
 		model.addAttribute("cartCount", cartService.getCartCount());
-		model.addAttribute("productRating", product.getAverageRating());
+		model.addAttribute("productRating", ratingService.getAverageRating(id));
 		
 		return "viewProduct";
+	}
+	
+	@GetMapping(value="/rate/{id}/{rating}")
+	public String rateProductPost(@PathVariable int id, @PathVariable Integer rating) throws Exception {
+		
+		logger.info("rateProductPost called");
+	    // Ensure that rating is not null
+	    if (rating != null) {
+	        ratingService.rateProduct(id, rating);
+	    }
+	    return "redirect:/VITproject/shop/viewproduct/{id}";
 	}
 }
