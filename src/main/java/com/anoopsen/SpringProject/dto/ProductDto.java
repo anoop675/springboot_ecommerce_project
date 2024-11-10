@@ -23,5 +23,11 @@ public class ProductDto {
 	
 	private String description;
 	
+	private String color;
+	
+	private String style;
+	
+	private String countryOrigin;
+	
 	private String imageName;
 }

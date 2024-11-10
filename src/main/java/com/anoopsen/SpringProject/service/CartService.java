@@ -269,7 +269,7 @@ public class CartService {
         if (newQuantity <= 0) {
             logger.info("CartProduct {} quantity updated to {} in cart {}.", cartProductToUpdate.getId(), newQuantity, cart.getId());
             
-            cartProducts.remove(cartProductToUpdate);
+            //cartProducts.remove(cartProductToUpdate.getId());
             cartProductRepo.deleteCartProductById(cartProductToUpdate.getId());
             cartRepo.save(cart);
       
@@ -281,7 +281,7 @@ public class CartService {
             logger.info("CartProduct quantity updated.");
         }
     }
-    
+
     @Transactional
     public void deleteCartById(int cartId) {
         // Delete all cartProduct entries related to the cart

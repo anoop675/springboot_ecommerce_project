@@ -12,7 +12,6 @@
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-		  
     <title>E-Commerce Shop</title>
 	<style>
 	        .navbar-blue {
@@ -24,6 +23,15 @@
 			.fixed-width-container {
 			    width: 1200px;
 			    margin-top: 30px;
+			}
+			.product-details-list {
+			    /*list-style-type: none;  Removes default bullet points */
+			    padding: 0; /* Removes padding from the list */
+			    margin: 10px; /* Removes margin from the list */
+			}
+
+			.product-details-list li {
+			    margin-bottom: 5px; /* Adjusts space between items */
 			}
 			.image {
 			    border-radius: 10px;
@@ -109,13 +117,18 @@
         <div class="col-sm-7 mt-5">
             <h2 th:text="${product.name}"></h2>
             <p th:text="${product.category.name}"></p>
-            <h2>₹ <span class="price" th:text="${product.price}"></span></h2>
+            <h2>₹ <span th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span></h2>
             <h5>Weight:
                 <span th:text="${product.weight}"></span> grams.
             </h5>
             <p>Description: 
                 <span th:text="${product.description}" style="margin-top: 20px"></span>
             </p>
+			<ul class="product-details-list">
+			    <li>Color: <span th:text="${product.color}"></span></li>
+			    <li>Style: <span th:text="${product.style}"></span></li>
+			    <li>Country of Origin: <span th:text="${product.countryOrigin}"></span></li>
+			</ul>
             <div class="rating">
                 <span>Rating:</span>
                 <span th:each="i : ${#numbers.sequence(1, 5)}">

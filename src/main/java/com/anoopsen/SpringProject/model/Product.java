@@ -46,6 +46,15 @@ public class Product {
 	@Column(name="product_description", length=1000, unique=false)
 	private String description;
 	
+	@Column(name="product_color", length=200, unique=false)
+	private String color;
+	
+	@Column(name="product_style", length=200, unique=false)
+	private String style;
+	
+	@Column(name="product_country_origin", length=200, unique=false)
+	private String countryOrigin;
+	
 	@Column(name="product_image_name", length=250, unique=false)
 	public String imageName;
 	
@@ -57,7 +66,7 @@ public class Product {
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ProductRating> productRatings;
-
+	/*
     // Method to calculate average rating
     public double getAverageRating() {
         return (!productRatings.isEmpty()) 
@@ -66,5 +75,5 @@ public class Product {
         				.average()
         				.orElse(0.0) 
         		: 0.0;
-    }
+    }*/
 }

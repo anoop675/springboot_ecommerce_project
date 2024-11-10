@@ -23,8 +23,12 @@ import com.anoopsen.SpringProject.dto.ProductDto;
 import com.anoopsen.SpringProject.model.Product;
 import com.anoopsen.SpringProject.model.Product.ProductBuilder;
 import com.anoopsen.SpringProject.model.ProductRating;
+import com.anoopsen.SpringProject.repository.CartProductRepository;
 import com.anoopsen.SpringProject.repository.ProductRepo;
 import com.anoopsen.SpringProject.repository.RatingRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.anoopsen.SpringProject.dto.ProductDto.ProductDtoBuilder;
 
 @Service
@@ -36,6 +40,9 @@ public class ProductService {
 	
 	@Autowired
 	RatingRepository ratingRepo;
+	
+	@Autowired
+	CartProductRepository cartProductRepo;
 	
 	@Autowired
 	CategoryService category_service;
@@ -113,23 +120,33 @@ public class ProductService {
 											   .price(productDto.getPrice())
 											   .weight(productDto.getWeight())
 											   .description(productDto.getDescription())
+											   .color(productDto.getColor())
+											   .style(productDto.getStyle())
+											   .countryOrigin(productDto.getCountryOrigin())
 											   .imageName(imageUUID);
 		
 		Product product = productBuilder.build();
 		
 		product_repository.save(product);
-		
+		/*
 		ProductRating defaultRating = new ProductRating();
 	    defaultRating.setProduct(product);
 	    defaultRating.setUser(null); // No user assigned
 	    defaultRating.setRating(0.0); // Initial rating is 0
 
-	    ratingRepo.save(defaultRating);		
+	    ratingRepo.save(defaultRating);	*/	
 		
 		return ResponseEntity.status(HttpStatus.OK).body("Product added successfully!");
 	}
 	
+	@Transactional
 	public void removeProductById(int id) {
+		// First, delete related CartProduct entries
+	    cartProductRepo.deleteByProductId(id);
+	    
+	    // Delete all ratings associated with the product
+	    ratingRepo.deleteByProductId(id);
+	    
 		product_repository.deleteById(id);
 	}
 }
