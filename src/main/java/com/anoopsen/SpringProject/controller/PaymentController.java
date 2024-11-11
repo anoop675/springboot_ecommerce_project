@@ -19,9 +19,9 @@ import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.User;
 
 @Controller
-@RequestMapping(value="/VITproject/")
+@RequestMapping(value="/VITproject")
 public class PaymentController {
-	
+	/*
 	@Value("${ethpaymentapi.url}")
 	private String EthPaymentApiUrl;
 	
@@ -56,6 +56,9 @@ public class PaymentController {
 		else {
 			System.out.println("Cart not found for user with name " + thisUser.getFirstName());
 		}
-	}
-	
+	}*/
+	/*@GetMapping(value="/payNow/eth/{ethAmount}")
+	public void paymentInEther(@ ) {
+		System.out.println("jafadjbjsjfjgbdgf");
+	}*/
 }

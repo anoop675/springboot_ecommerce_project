@@ -14,12 +14,36 @@
 
     <title>E-Commerce Shop</title>
 	<style>
-	        .navbar-blue {
-	            background-color: #007bff;
-	        }
-	        .navbar-blue .navbar-brand, .navbar-blue .nav-link {
-	            color: #ffffff;
-	        }
+		.marquee {
+		    background-color: #001f3f;
+		    color: #ffffff;
+		    padding: 5px 0;
+		    overflow: hidden;
+		    white-space: nowrap;
+		    position: fixed;
+		    top: 0;
+		    width: 100%;
+		    z-index: 1050;
+		}
+		.marquee-text {
+		    display: inline-block;
+		    animation: scroll-right 10s linear infinite;
+		}
+		@keyframes scroll-right {
+		    from { 
+				transform: translateX(100%); 
+			}
+		    to { 
+				transform: translateX(-100%); 
+			}
+		}
+		.navbar-blue {
+		    background-color: #007bff;
+		    margin-top: 32px; /* Space for the marquee */
+		}
+		.navbar-blue .navbar-brand, .navbar-blue .nav-link {
+		    color: #ffffff;
+		}
 			.fixed-width-container {
 			    width: 1200px;
 			    margin-top: 30px;
@@ -79,7 +103,10 @@
 	</style>
 </head>
 <body>
-
+<!-- Marquee -->
+<div class="marquee">
+	<span class="marquee-text">Exclusive Deals Available Now! | Up to 50% off on select products! | Shop Now! </span>
+</div>
 <nav class="navbar navbar-expand-lg navbar-blue">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
@@ -101,7 +128,7 @@
                         <!--<a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/VITproject/login}" href="#">login</a>-->
                         <a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
                         <a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">
-                        	Cart (<span class="dropdown-item" th:text="${cartCount}">0</span>)
+                        	Cart(<span class="dropdown-item" th:text="${cartCount}">0</span>)
 						</a>
                     </div>
                 </li>
@@ -109,7 +136,7 @@
         </div>
     </div>
 </nav>
-<div class="container mt-5">
+<div class="container mt-3">
     <div class="row">
         <div class="col-sm-5 d-flex justify-content-center">
             <img class="image" height="300px" width="300px" src="" th:src="@{${'/productImages/' + product.imageName}}" alt="">

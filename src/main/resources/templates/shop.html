@@ -8,8 +8,35 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css">
     <style>
+		.marquee {
+		    background-color: #001f3f;
+		    color: #ffffff;
+		    padding: 5px 0;
+		    overflow: hidden;
+		    white-space: nowrap;
+		    position: fixed;
+		    top: 0;
+		    width: 100%;
+		    z-index: 1050;
+		}
+
+		.marquee-text {
+		    display: inline-block;
+		    animation: scroll-right 10s linear infinite;
+		}
+
+		/* Keyframes for scrolling text from right to left */
+		@keyframes scroll-right {
+		    from { 
+		        transform: translateX(100%); /* Starts off-screen to the right */
+		    }
+		    to { 
+		        transform: translateX(-100%); /* Moves off-screen to the left */
+		    }
+		}
         .navbar-blue {
             background-color: #007bff;
+            margin-top: 32px; /* Space for the marquee */
         }
         .navbar-blue .navbar-brand, .navbar-blue .nav-link {
             color: #ffffff;
@@ -44,84 +71,91 @@
         .product-card:hover .product-details {
             opacity: 1;
         }
-		.navbar .dropdown-menu {
-			right: -10px; /* Adjust this value to add spacing from the right */
-			left: auto; /* Prevent auto left positioning */
-			max-width: 200px; /* Adjust this value to control the width */
-			width: auto; /* Ensure the width adjusts to max-width */
-		}
-		.fixed-width-container {
-			width: 1200px;
-			margin-top: 30px;
-		}
+        .navbar .dropdown-menu {
+            right: -10px;
+            left: auto;
+            max-width: 200px;
+            width: auto;
+        }
+        /* Adjust container and body spacing */
+        .fixed-width-container {
+            width: 1200px;
+            margin-top: 60px;
+        }
+        body {
+            padding-top: 100px; /* Space for both the marquee and navbar */
+        }
     </style>
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-blue fixed-top">
-		  <div class="container-fluid">
-		      <a class="navbar-brand" href="#">
-		         <h3 class="d-inline-block align-top">E-commerce Shop</h3>
-		      </a>
-		      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		         <span class="navbar-toggler-icon"></span>
-		      </button>
-		   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-		       <ul class="navbar-nav mr-auto"></ul>
-		         <ul class="navbar-nav ml-auto">
-		           <li class="nav-item dropdown">
-		            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		                 Menu
-		            </a>
-		            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">Home</a>
-						<!--<a class="dropdown-item" sec:authorize="isAnonymous()" th:href="@{/VITproject/login}" href="#">login</a>-->
-						<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
-						<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">
-							Cart (<span th:text="${cartCount}"><!----></span>)
-						</a>
-		            </div>
-		         </li>
-		      </ul>
-		   </div>
-		</div>
-	</nav>
-<div class="jumbotron text-center" style="margin-top: 40px;">
-    <h1 class="display-4">Welcome back, <span th:text="${firstname}"></span>!</h1>
-</div>
-
-<div class="container" style="margin-top: -70px; padding-top: 70px;">
-    <div class="row">
-        <!-- Category Search -->
-        <div class="col-sm-3">
-            <h4>Search by Category</h4>
-            <select class="selectpicker form-control" data-live-search="true" onchange="location = this.value;">
-                <option value="" selected disabled>Select Category</option>
-                <option th:each="category : ${categories}" th:value="@{/VITproject/shop/category/{id}(id=${category.id})}" th:text="${category.name}"></option>
-            </select>
+    <!-- Marquee -->
+    <div class="marquee">
+        <span class="marquee-text">Exclusive Deals Available Now! | Up to 50% off on select products! | Shop Now! </span>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-blue fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <h3 class="d-inline-block align-top">E-commerce Shop</h3>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto"></ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             Menu
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">Home</a>
+                            <a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
+                            <a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">
+                                Cart (<span th:text="${cartCount}"><!----></span>)
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
+    <div class="jumbotron text-center" style="margin-top: 0px;">
+        <h1 class="display-4">Welcome back, <span th:text="${firstname}"></span>!</h1>
+    </div>
 
-        <!-- Products Section -->
-        <div class="col-sm-9">
-            <h3 class="text-center" th:if="${#lists.isEmpty(products)}">No products available</h3>
-            <div class="row mt-4">
-                <div class="col-md-4 mb-4" th:each="product : ${products}">
-                    <div class="card h-100 text-center product-card">
-                        <img class="card-img-top product-image" th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}">
-                        <div class="card-body product-details">
-                            <h5 class="card-title" th:text="${product.name}"></h5>
-                            <h4>₹ <span th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span></h4>
-                            <a href="#" th:href="@{/VITproject/shop/viewproduct/{id}(id=${product.id})}" class="btn btn-primary">View Product</a>
+    <div class="container fixed-width-container">
+        <div class="row">
+            <!-- Category Search -->
+            <div class="col-sm-3">
+                <h4>Search by Category</h4>
+                <select class="selectpicker form-control" data-live-search="true" onchange="location = this.value;">
+                    <option value="" selected disabled>Select Category</option>
+                    <option th:each="category : ${categories}" th:value="@{/VITproject/shop/category/{id}(id=${category.id})}" th:text="${category.name}"></option>
+                </select>
+            </div>
+
+            <!-- Products Section -->
+            <div class="col-sm-9">
+                <h3 class="text-center" th:if="${#lists.isEmpty(products)}">No products available</h3>
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-4" th:each="product : ${products}">
+                        <div class="card h-100 text-center product-card">
+                            <img class="card-img-top product-image" th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}">
+                            <div class="card-body product-details">
+                                <h5 class="card-title" th:text="${product.name}"></h5>
+                                <h4>₹ <span th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span></h4>
+                                <a href="#" th:href="@{/VITproject/shop/viewproduct/{id}(id=${product.id})}" class="btn btn-primary">View Product</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
 </body>
 </html>

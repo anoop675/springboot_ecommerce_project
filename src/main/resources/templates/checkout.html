@@ -237,7 +237,7 @@
 						    </li>
 						 </ul>	
 						 
-						 <form action="" method="get" th:action="@{/VITproject/payNow/eth}" > <!--TODO-->
+						 <form action="" method="get" th:action="@{/VITproject/payNow/eth/${ethAmount}(ethAmount=${ethAmount})}" > <!--TODO-->
 								<p>1 ETH =
 									<span><strong>₹<span th:text="${eth_inr_rate}" style="color: green;"></span></strong></span>
 								</p>

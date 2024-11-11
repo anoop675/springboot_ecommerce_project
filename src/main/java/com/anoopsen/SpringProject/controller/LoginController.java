@@ -118,10 +118,7 @@ public class LoginController {
 		    	String formattedPhoneNumber = "+91 " + user.getPhoneNum().substring(0, 2) + "*****" + user.getPhoneNum().substring(7);
 		    	model.addAttribute("message", "An OTP has been sent to your registered number " + formattedPhoneNumber + " via SMS");
 		    	model.addAttribute("email", email);  // Send email for later use in OTP verification
-		    	PasswordResetRequestDto dto2 = new PasswordResetRequestDto();
-		    	dto2.setEmail(email);
-		    	dto2.setOtp("");
-		    	model.addAttribute("dto2", dto2);
+		    	model.addAttribute("dto2", new PasswordResetRequestDto(email, ""));
 		        thisPage = "otp";  // Redirect to OTP verification page
 
 	    	}
@@ -135,7 +132,7 @@ public class LoginController {
 	
 	
 	@PostMapping("/verifyOTP") //GET is not supported (i.e if we type /VITproject/verifyOTP). this makes it secure from unauthorized access
-	public String verifyOtp(@ModelAttribute("dto") PasswordResetRequestDto prrd, Model model) {
+	public String verifyOtp(@ModelAttribute("dto2") PasswordResetRequestDto prrd, Model model) {
 	    String email = prrd.getEmail();
 	    String otp = prrd.getOtp();
 
@@ -164,11 +161,13 @@ public class LoginController {
 	    String newPwd = prd.getNewPassword();
 	    String confirmPwd = prd.getConfirmPassword();
 
-	    if (newPwd.equals(confirmPwd)) {
+	    if (newPwd.equals(confirmPwd) && userService.verifyPassword(newPwd)) {
 	        logger.info("passwords are a match");
 	        userService.resetPassword(email, newPwd);
+	        model.addAttribute("message", "Password reset successful! You may now login");
 	        return "login";
-	    } else {
+	    }
+	    else {
 	        model.addAttribute("errorMessage", "Invalid password entered, Please try again");
 	        return "resetPassword";
 	    }

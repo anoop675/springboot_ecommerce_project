@@ -118,6 +118,13 @@
 		    <artifactId>aws-java-sdk-personalize</artifactId>
 		    <version>1.12.772</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.web3j/core -->
+		<dependency>
+		    <groupId>org.web3j</groupId>
+		    <artifactId>core</artifactId>
+		    <version>5.0.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
