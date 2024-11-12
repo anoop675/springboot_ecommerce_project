@@ -144,6 +144,14 @@
                             <div class="card-body product-details">
                                 <h5 class="card-title" th:text="${product.name}"></h5>
                                 <h4>₹ <span th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 0, 'POINT')}"></span></h4>
+								<!-- TODO: Display each product rating
+								<div class="rating">
+								    <span>Rating:</span>
+								    <span th:each="i : ${#numbers.sequence(1, 5)}">
+								        <i class="fa" th:classappend="${i <= productRating} ? 'fa-star' : 'fa-star-o'"></i>
+								    </span>
+								</div>-->
+
                                 <a href="#" th:href="@{/VITproject/shop/viewproduct/{id}(id=${product.id})}" class="btn btn-primary">View Product</a>
                             </div>
                         </div>

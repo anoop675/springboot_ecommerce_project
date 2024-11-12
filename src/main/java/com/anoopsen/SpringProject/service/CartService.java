@@ -233,24 +233,6 @@ public class CartService {
 
         return ResponseEntity.status(HttpStatus.OK).body("Product added to cart successfully");
     }
-    /*
-    public void removeProductFromCart(int productId) {
-        Cart cart = this.getAuthenticatedUserCart();
-        List<CartProduct> cartProducts = cart.getCartProducts();
-        
-        logger.info("product_id attempted to be deleted: "+productId);
-        logger.info("product: "+cartProducts.stream().map(cp -> cp.getProduct().getId()).findFirst().get());
-        
-        // Find the CartProduct by productId and remove it
-        CartProduct cartProductToRemove = cartProducts.stream()
-        	.filter(cp -> cp.getProduct().getId() == productId)
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Product not found in cart"));
-        
-        cartProducts.remove(cartProductToRemove);
-        cartRepo.save(cart);
-        cartProductRepo.delete(cartProductToRemove); // Delete the CartProduct entity
-    }*/
 
     @Transactional
     public void removeProductFromCart(int productId, int quantityToRemove) {

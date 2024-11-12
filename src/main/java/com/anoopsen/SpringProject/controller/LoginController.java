@@ -83,10 +83,12 @@ public class LoginController {
 	    if (response.getStatusCode() == HttpStatus.CREATED) {
 	        request.login(user.getEmail(), password);  // If user is created successfully, log the user in
 	        return "redirect:/VITproject/shop";
-	    } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
+	    }
+	    else if (response.getStatusCode() == HttpStatus.CONFLICT) {
 	        model.addAttribute("errorMessage", "User with this email already exists."); // If there's a conflict (user already exists), show an error message
 	        return "register";
-	    } else {
+	    } 
+	    else {
 	        model.addAttribute("errorMessage", "An error occurred during registration. Please try again."); // For other errors, show a generic error message
 	        return "register"; 
 	    }
@@ -155,7 +157,7 @@ public class LoginController {
 	    }
 	}
 	
-	@PostMapping("/resetPassword")   //GET is not supported (i.e if we type /VITproject/resetPassword). this makes it secure from unauthorized access
+	@PostMapping(value="/resetPassword")   //GET is not supported (i.e if we type /VITproject/resetPassword). this makes it secure from unauthorized access
 	public String resetPassword(@ModelAttribute("dto3") PasswordResetDto prd, Model model) {
 		String email = prd.getEmail();
 	    String newPwd = prd.getNewPassword();

@@ -82,63 +82,33 @@
 	</div>
 </nav>
 <div class="container" style="padding-top: 70px;">
-    <!--Section: Block Content-->
     <section class="mt-5 mb-4">
-
-        <!--Grid row-->
         <div class="row">
-
-            <!--Grid column-->
             <div class="col-lg-8 mb-4">
-
-                <!-- Card -->
                 <div class="card wish-list pb-1">
                     <div class="card-body">
-
                         <h5 class="mb-2">Billing details</h5>
-
-                        <!-- Grid row -->
                         <div class="row">
-
-                            <!-- Grid column -->
                             <div class="col-lg-6">
-
-                                <!-- First name -->
                                 <div class="md-form md-outline mb-0 mb-lg-4">
                                     <label for="firstName">First name</label>
                                     <input type="text" id="firstName" required class="form-control mb-0 mb-lg-2">
                                 </div>
-
                             </div>
-                            <!-- Grid column -->
-
-                            <!-- Grid column -->
                             <div class="col-lg-6">
-
-                                <!-- Last name -->
                                 <div class="md-form md-outline">
                                     <label for="lastName">Last name</label>
                                     <input type="text" id="lastName" required class="form-control">
                                 </div>
-
                             </div>
-                            <!-- Grid column -->
-
                         </div>
-                        <!-- Grid row -->
-
-
-
-                        <!-- Country -->
+						<!-- Country -->
                         <div class="d-flex flex-wrap">
                             <div class="select-outline position-relative w-100">
                                 <label>Country - <strong>INDIA</strong></label>
-
-
                             </div>
                         </div>
-
-                        <!-- Address Part 1 -->
+						<!-- Address Part 1 -->
                         <div class="md-form md-outline mt-2">
                             <label for="form14">Address (Line 1)</label>
                             <input type="text" required id="form14" placeholder="House number and street name" class="form-control">
@@ -181,23 +151,12 @@
                             <label for="form76">Additional information</label>
                             <textarea id="form76" class="md-textarea form-control" rows="4"></textarea>
                         </div>
-
-
-
                     </div>
                 </div>
-                <!-- Card -->
-
             </div>
-            <!--Grid column-->
-
-            <!--Grid column-->
             <div class="col-lg-4">
-
-                <!-- Card -->
                 <div class="card mb-4">
                     <div class="card-body">
-
                         <h5 class="mb-3">The total amount </h5>
 
                         <ul class="list-group list-group-flush">
@@ -235,15 +194,16 @@
 						          Shipping
 						          <span >0.000014 ETH</span>
 						    </li>
-						 </ul>	
-						 
-						 <form action="" method="get" th:action="@{/VITproject/payNow/eth/${ethAmount}(ethAmount=${ethAmount})}" > <!--TODO-->
-								<p>1 ETH =
-									<span><strong>₹<span th:text="${eth_inr_rate}" style="color: green;"></span></strong></span>
-								</p>
-						       <button type="submit"  class="btn btn-primary btn-block waves-effect waves-light">Pay Now(in ETH)</button>
-						 </form>					
-
+							<p>1 ETH =
+								<span><strong>₹<span th:text="${eth_inr_rate}" style="color: green;"></span></strong></span>
+							</p>
+						 </ul>
+						 <!--	
+						 <form action="" method="post" th:action="@{/VITproject/payNow/eth}">
+						     <input type="hidden" name="ethAmount" th:value="${ethAmount}">
+						     <button type="submit" class="btn btn-primary btn-block waves-effect waves-light">Pay Now (in ETH)</button>
+						 </form>-->
+						 <button id="payNowBtn" class="btn btn-primary" onclick="connectToMetaMask()">Pay Now (in ETH)</button>
                     </div>
                 </div>
                 <!-- Card -->
@@ -272,12 +232,146 @@
         </div>
     </section>
 </div>
+<!-- Modal Structure -->
+<div id="ethTransactionModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ethereum Transaction</h5>
+                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="ethTransactionForm">
+                    <div class="form-group">
+                        <label for="senderAddress">Sender Address</label>
+                        <input type="text" class="form-control" id="senderAddress" placeholder="MetaMask account address" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipientAddress">Recipient Address</label>
+                        <input type="text" class="form-control" id="recipientAddress" placeholder="Enter recipient's ETH address">
+                    </div>
+					<!--
+                    <div class="form-group">
+                        <label for="ethAmount">Amount (ETH)</label>
+                        <input type="text" class="form-control" id="ethAmount" placeholder="Enter amount in ETH">
+                    </div>-->
+					<!-- Display ETH Amount dynamically with Thymeleaf -->
+					<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+					    Amount Payable
+					    <span id="amountValue" th:text="${ethAmount} + ' ETH'"></span> <!-- ETH Amount from Thymeleaf -->
+					</li>
+                </form>
+                <p id="status"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button type="button" class="btn btn-primary" onclick="processTransaction()">Confirm Payment</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- Bootstrap-Select JS -->
+<!-- Bootstrap, jQuery, and Web3 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<!-- Add ethers.js to parse ETH to Wei -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.1/dist/ethers.min.js"></script>
+<!-- JavaScript for MetaMask interaction -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
+<script>
+    // Open Modal on clicking "Pay Now" button
+    document.getElementById("payNowBtn").addEventListener("click", function () {
+        $('#ethTransactionModal').modal('show');
+    });
 
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    // Close Modal
+    function closeModal() {
+        $('#ethTransactionModal').modal('hide');
+    }
+
+    // Initialize web3 with MetaMask's provider
+    let web3;
+    if (typeof window.ethereum !== 'undefined') {
+        web3 = new Web3(window.ethereum);
+    } else {
+        alert("MetaMask not detected! Please install MetaMask.");
+    }
+
+    // Process Ethereum Transaction
+    async function processTransaction() {
+        const senderAddressInput = document.getElementById("senderAddress");
+        const recipientAddress = document.getElementById("recipientAddress").value;
+
+        // Ensure recipient address is filled
+        if (!recipientAddress) {
+            alert("Please enter a valid recipient address.");
+            return;
+        }
+
+        try {
+            // Request MetaMask connection
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            const senderAddress = accounts[0];
+            senderAddressInput.value = senderAddress; // Display connected address in form
+
+            // Get the ethAmount dynamically (from the Thymeleaf-rendered value or JS binding)
+            const ethAmount = document.getElementById("amountValue").innerText.replace(' ETH', ''); // Remove 'ETH' text
+
+            // Prepare transaction parameters
+            const transactionParameters = {
+                to: recipientAddress,
+                from: senderAddress,
+                value: web3.utils.toHex(web3.utils.toWei(ethAmount.toString(), 'ether')) // Convert ETH to Wei
+            };
+
+            // Send the transaction with MetaMask
+            const transactionHash = await ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [transactionParameters],
+            });
+
+            // Transaction success
+            document.getElementById("status").innerText = `Transaction sent! Hash: ${transactionHash}`;
+            // Send transaction details to backend
+            sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount);
+			
+        } catch (error) {
+            console.error("Transaction failed:", error);
+            document.getElementById("status").innerText = `Transaction failed: ${error.message}`;
+        }
+    }
+
+    // Send transaction details to backend (AJAX or Fetch)
+    async function sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount) {
+        try {
+            const response = await fetch('/VITproject/recordTransaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    transactionHash: transactionHash,
+                    senderAddress: senderAddress,
+                    recipientAddress: recipientAddress,
+                    ethAmount: ethAmount
+                }),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                console.log("Transaction details sent successfully:", result);
+            } else {
+                console.error("Error sending transaction details:", result);
+            }
+        } catch (error) {
+            console.error("Failed to send transaction details to backend:", error);
+        }
+    }
+</script>
 </body>
 </html>

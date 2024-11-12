@@ -13,8 +13,8 @@ import org.web3j.tx.response.QueuingTransactionReceiptProcessor;
 import org.web3j.tx.response.TransactionReceiptProcessor;
 
 import javax.crypto.Cipher;
-import com.anoopsen.SpringProject.dto.EthTransactionDto;
-import com.anoopsen.SpringProject.model.EthWallet;
+//import com.anoopsen.SpringProject.dto.EthTransactionDto;
+//import com.anoopsen.SpringProject.model.EthWallet;
 
 import jakarta.annotation.PostConstruct;
 
