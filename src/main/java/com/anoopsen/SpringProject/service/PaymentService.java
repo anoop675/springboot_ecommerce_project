@@ -20,7 +20,13 @@ import jakarta.annotation.PostConstruct;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.web3j.utils.Convert;
+
+import com.anoopsen.SpringProject.dto.PaymentRequest;
+//import com.paytm.pg.merchant.CheckSumServiceHelper;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -125,5 +131,43 @@ public class PaymentService {
         byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
         
         return new String(decryptedBytes);
+    }*//*
+    @Value("${paytm.merchant-id}")
+    private String merchantId;
+    
+    @Value("${paytm.merchant-key}")
+    private String merchantKey;
+    
+    @Value("${paytm.channel-id}")
+    private String channelId;
+    
+    @Value("${paytm.website}")
+    private String website;
+    
+    @Value("${paytm.industry-type-id}")
+    private String industryTypeId;
+    
+    @Value("${paytm.paytm-url}")
+    private String paytmUrl;
+    
+    @Value("${paytm.callback-url}")
+    private String callbackUrl;
+
+    public Map<String, String> initiatePayment(PaymentRequest paymentRequest) throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("MID", merchantId);
+        params.put("ORDER_ID", paymentRequest.getOrderId());
+        params.put("CUST_ID", paymentRequest.getCustomerId());
+        params.put("TXN_AMOUNT", paymentRequest.getAmount());
+        params.put("CHANNEL_ID", channelId);
+        params.put("WEBSITE", website);
+        params.put("INDUSTRY_TYPE_ID", industryTypeId);
+        params.put("CALLBACK_URL", callbackUrl);
+        
+        // Generate checksum
+        String checksum = CheckSumServiceHelper.getCheckSumServiceHelper().genrateCheckSum(merchantKey, params);
+        params.put("CHECKSUMHASH", checksum);
+
+        return params;
     }*/
 }

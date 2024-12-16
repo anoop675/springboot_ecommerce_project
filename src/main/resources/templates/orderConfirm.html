@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+
+    <title>E-commerce Shop</title>
+	<style>
+		.navbar-blue {
+		   background-color: #007bff;
+		}
+		.navbar-blue .navbar-brand, .navbar-blue .nav-link {
+		   color: #ffffff;
+		}
+		.navbar .dropdown-menu {
+		    right: -10px;
+		    left: auto;
+		    max-width: 200px;
+		    width: auto;
+		}		
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-blue fixed-top">
+	    <div class="container-fluid">
+	        <a class="navbar-brand" href="#">
+	            <h3 class="d-inline-block align-top">E-commerce Shop</h3>
+	        </a>
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	            <span class="navbar-toggler-icon"></span>
+	        </button>
+
+	        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+	            <ul class="navbar-nav mr-auto"></ul>
+	            <ul class="navbar-nav ml-auto">
+	                <li class="nav-item dropdown">
+	                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                        Menu
+	                    </a>
+	                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" th:href="@{/VITproject/shop}" href="#">Home</a>
+							<a class="dropdown-item" sec:authorize="isAuthenticated()" th:href="@{/VITproject/logout}" href="#">Logout</a>
+							<a class="dropdown-item" th:href="@{/VITproject/cart}" href="#">
+							    Cart (<span th:text="${cartCount}">0</span>)
+							</a>
+	                    </div>
+	                </li>
+	            </ul>
+	        </div>
+	    </div>
+	</nav>
+
+<main>
+    <div class="container" style="padding-top: 70px">
+
+        <!--Section: Block Content-->
+        <section class="mt-5 mb-4">
+
+            <!--Grid row-->
+            <div class="row">
+
+                <!--Grid column-->
+                <div class="col-lg-8">
+
+                    <!-- Card -->
+                    <div class="card wish-list mb-4">
+                        <div class="card-body">
+
+                            <h4 class="mb-4" style="color: green;">Hooray! Your orders are confirmed</h4>
+							
+							<div class="row mb-4" th:each="cartProduct, iStat : ${cart}">
+							    <div class="col-md-5 col-lg-3 col-xl-3">
+							        <div class="mb-3 mb-md-0">
+							            <img class="img-fluid w-100"
+							                 th:src="@{${'/productImages/' + cartProduct.product.imageName}}"
+							                 alt="Product Image">
+							        </div>
+							    </div>
+							    <div class="col-md-7 col-lg-9 col-xl-9">
+							        <div>
+							            <div class="d-flex justify-content-between">
+							                <div>
+							                    <h5 th:text="${cartProduct.product.name}"></h5>
+							                    <p class="mb-3 text-uppercase small">Weight: <span th:text="${cartProduct.product.weight}"></span> grams</p>
+							                    <p class="mb-3 text-uppercase small">Quantity: <span th:text="${cartProduct.quantity}"></span></p>
+							                </div>
+							            </div>
+							        </div>
+							    </div>
+							</div>
+                            <hr class="mb-4">
+
+                            <p class="text-primary mb-0"><i class="fas fa-info-circle mr-1"></i> Please wait for the update if the order confirmation is delayed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- Bootstrap-Select JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldjDDvf6ntkA6B1QYZZjRFpurt9TtB6UJm1wDXg" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-3qaqj0lcgkHh7uWfhA5MXvLIbK39YzuFHz53CLxZCrq3GmC5iT9u0NQBeinVGAaI" crossorigin="anonymous"></script>
+
+</body>
+</html>

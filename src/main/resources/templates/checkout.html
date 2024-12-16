@@ -179,9 +179,13 @@
                             </li>
                         </ul>
 
-                        <form action="" method="post" th:action="@{/VITproject/payNow}" >
-                            <button type="submit"  class="btn btn-primary btn-block waves-effect waves-light">Pay Now</button>
-                        </form>
+						<form action="" method="post" th:action="@{/VITproject/paytm/make-payment}">
+						    <input type="hidden" name="orderId" value="ORD12345" />
+						    <input type="hidden" name="txnAmount" th:value="${total}" />
+						    <input type="hidden" name="customerId" value="CUSTOMER123" />
+						    <button type="submit" class="btn btn-primary btn-block waves-effect waves-light">Pay Now</button>
+						</form>
+
 						
 						<div id="or" style="margin-top: 20px">OR</div>
 						
@@ -307,12 +311,16 @@
         const senderAddressInput = document.getElementById("senderAddress");
         const recipientAddress = document.getElementById("recipientAddress").value;
 
-        // Ensure recipient address is filled
         if (!recipientAddress) {
             alert("Please enter a valid recipient address.");
             return;
         }
-
+		
+		else if(senderAddress == recipientAddress) {
+		    alert("Sender's address cannot be reciever's address.");
+		    return;
+		}
+		
         try {
             // Request MetaMask connection
             const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -338,7 +346,8 @@
             // Transaction success
             document.getElementById("status").innerText = `Transaction sent! Hash: ${transactionHash}`;
             // Send transaction details to backend
-            sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount);
+			sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount);
+			closeModal();
 			
         } catch (error) {
             console.error("Transaction failed:", error);
@@ -346,32 +355,34 @@
         }
     }
 
-    // Send transaction details to backend (AJAX or Fetch)
-    async function sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount) {
-        try {
-            const response = await fetch('/VITproject/recordTransaction', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    transactionHash: transactionHash,
-                    senderAddress: senderAddress,
-                    recipientAddress: recipientAddress,
-                    ethAmount: ethAmount
-                }),
-            });
+	async function sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount) {
+	    try {
+	        const response = await fetch('/VITproject/recordTransaction', {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json',
+	            },
+	            body: JSON.stringify({
+	                transactionHash: transactionHash,
+	                senderAddress: senderAddress,
+	                recipientAddress: recipientAddress,
+	                ethAmount: ethAmount
+	            }),
+	        });
 
-            const result = await response.json();
-            if (response.ok) {
-                console.log("Transaction details sent successfully:", result);
-            } else {
-                console.error("Error sending transaction details:", result);
-            }
-        } catch (error) {
-            console.error("Failed to send transaction details to backend:", error);
-        }
-    }
+	        if (!response.ok) {
+	            throw new Error(`HTTP error! status: ${response.status}`);
+	        }
+
+	        // If successful, render the orderConfirm page
+	        console.log("Transaction details sent successfully.");
+
+	        window.location.href = '/VITproject/orderConfirm';  // Or just update the page dynamically if needed
+	    } catch (error) {
+	        console.error("Failed to send transaction details to backend:", error);
+	    }
+	}
+
 </script>
 </body>
 </html>

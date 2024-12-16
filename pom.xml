@@ -124,7 +124,12 @@
 		    <artifactId>core</artifactId>
 		    <version>5.0.0</version>
 		</dependency>
-
+		<!--
+		<dependency>
+		    <groupId>com.paytm.pg</groupId>
+		    <artifactId>paytmchecksum</artifactId>
+		    <version>1.4.1</version> 
+		</dependency>-->
 	</dependencies>
 
 	<build>
