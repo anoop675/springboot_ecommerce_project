@@ -17,13 +17,18 @@ import org.springframework.stereotype.Service;
 
 import com.anoopsen.SpringProject.config.PasswordEncoderConfig;
 import com.anoopsen.SpringProject.model.Cart;
+import com.anoopsen.SpringProject.model.ProductRating;
 import com.anoopsen.SpringProject.model.Role;
 import com.anoopsen.SpringProject.model.User;
 import com.anoopsen.SpringProject.repository.CartRepo;
+import com.anoopsen.SpringProject.repository.RatingRepository;
 import com.anoopsen.SpringProject.repository.RoleRepository;
 import com.anoopsen.SpringProject.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserService {
 	
 	Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -39,6 +44,9 @@ public class UserService {
 	
 	@Autowired
 	CartService cartService;
+	
+	@Autowired
+	RatingRepository ratingRepo;
 	
 	
 	public ResponseEntity<String> createUser(User user, String password, List<Role> roles) throws Exception{
@@ -163,6 +171,7 @@ public class UserService {
 	
 	public void removeUser(int id) {
 		cartService.deleteCartById(this.getUser(id).getCart().getId());
+		ratingRepo.deleteByUserId(id);
 		userRepo.deleteById(id);
 	}
 	

@@ -16,4 +16,8 @@ public interface RatingRepository extends JpaRepository<ProductRating, Integer>{
     @Modifying
     @Query("DELETE FROM ProductRating pr WHERE pr.product.id = :productId")
     void deleteByProductId(@Param("productId") int productId);
+    
+    @Modifying
+    @Query("DELETE FROM ProductRating pr WHERE pr.user.id = :userId")
+    void deleteByUserId(@Param("userId") int userId);
 }
