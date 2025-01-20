@@ -61,12 +61,12 @@ public class SpringProjectApplication {
 	}
 	
 	public static void main(String[] args) throws URISyntaxException {
-		logger.info("Java version: "+System.getProperty("java.version"));
-		logger.info("Class path: "+getClassPath());
+		//logger.info("Java version: "+System.getProperty("java.version"));
+		//logger.info("Class path: "+getClassPath());
 			
 		SpringApplication.run(SpringProjectApplication.class, args);
 	}
-		
+	/*	
 	public static String getClassPath() throws URISyntaxException {
 	    URI codeSourceUri = SpringProjectApplication.class
 	                            .getProtectionDomain()
@@ -77,5 +77,5 @@ public class SpringProjectApplication {
 	    // Convert to a Path (works whether it's a JAR or a directory)
 	    Path path = Paths.get(codeSourceUri).getParent(); // Parent directory of the JAR or classes
 	    return path.toString();
-	}
+	}*/
 }
