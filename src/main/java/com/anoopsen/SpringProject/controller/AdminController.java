@@ -113,7 +113,6 @@ public class AdminController {
 	}
 	
 	//Product Section
-	
 	@GetMapping(value="/admin/products")
 	public String getProducts(Model model) {
 		List<Product> products = product_service.getAllProduct();

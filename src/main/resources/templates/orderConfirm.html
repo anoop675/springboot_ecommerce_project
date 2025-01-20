@@ -100,6 +100,44 @@
                         </div>
                     </div>
                 </div>
+				<!--Grid column-->
+				<div class="col-lg-4">
+				    <!-- Card -->
+				    <div class="card mb-4">
+				        <div class="card-body">
+
+				            <h5 class="mb-3">Total Amount </h5>
+
+				            <ul class="list-group list-group-flush">
+				                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+				                    Amount Payable
+				                    <span>₹<span th:text="${total}"></span></span>
+				                </li>
+				                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+				                    Shipping
+				                    <span>₹0.0</span>
+				                </li>
+				                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+				                    <div>
+				                        <strong>The total amount of</strong>
+				                        <strong>
+				                            <p class="mb-0">(including VAT)</p>
+				                        </strong>
+				                    </div>
+				                    <span><strong>₹<span th:text="${total}"></span></strong></span>
+				                </li>
+								<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+								    <div style="flex-grow: 1; margin-right: 10px;">
+								        <strong>Transaction Hash:</strong>
+								        <input type="text" id="txnHashBox" class="form-control" 
+								               style="font-size: 0.9rem; height: auto;" 
+								               th:value="${txnHash}" readonly>
+								    </div>
+								    <button class="btn btn-outline-primary btn-sm" onclick="copyTxnHash()">Copy</button>
+								</li>
+				            </ul>
+				        </div>
+				    </div>
             </div>
         </section>
     </div>
@@ -111,6 +149,19 @@
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldjDDvf6ntkA6B1QYZZjRFpurt9TtB6UJm1wDXg" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-3qaqj0lcgkHh7uWfhA5MXvLIbK39YzuFHz53CLxZCrq3GmC5iT9u0NQBeinVGAaI" crossorigin="anonymous"></script>
+<!--JS to copy the transactionHash-->
+<script>
+    function copyTxnHash() {
+        const txnHashBox = document.getElementById("txnHashBox");
+        txnHashBox.select();
+        txnHashBox.setSelectionRange(0, 99999); // For mobile devices
+        navigator.clipboard.writeText(txnHashBox.value).then(() => {
+            alert("Transaction Hash copied to clipboard!");
+        }).catch(err => {
+            console.error("Error copying Transaction Hash: ", err);
+        });
+    }
+</script>
 
 </body>
 </html>

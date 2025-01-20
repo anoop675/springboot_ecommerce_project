@@ -40,22 +40,21 @@ public class SpringProjectApplication {
 	//Initializing our twilio configuration to twilio api upon application startup
 	@PostConstruct                 //@PostConstruct is used to execute the method initTwilio() as soon as the application starts
 	public void initTwilio() {
-		
 		TwilioConfig twilioConfig = new TwilioConfig();
 		twilioConfig.setAccountSid(accountSid);
 		twilioConfig.setAuthToken(authToken);
 		twilioConfig.setTrialNumber(trialNumber);
 			
-			Twilio.init(
-				twilioConfig.getAccountSid(),
-				twilioConfig.getAuthToken()
-			);
+		Twilio.init(
+			twilioConfig.getAccountSid(),
+			twilioConfig.getAuthToken()
+		);
 				
-			logger.info("Twilio configuration is successfully configured with Twilio API");
-			logger.info("Twilio account_sid: "+twilioConfig.getAccountSid());
-			logger.info("Twilio authentication_token: "+twilioConfig.getAuthToken());
-			logger.info("Twilio issued trial number: "+twilioConfig.getTrialNumber());
-		}
+		logger.info("Twilio configuration is successfully configured with Twilio API");
+		logger.info("Twilio account_sid: "+twilioConfig.getAccountSid());
+		logger.info("Twilio authentication_token: "+twilioConfig.getAuthToken());
+		logger.info("Twilio issued trial number: "+twilioConfig.getTrialNumber());
+	}
 	
 	public static void main(String[] args) throws URISyntaxException {
 		logger.info("Java version: "+System.getProperty("java.version"));

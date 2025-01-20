@@ -40,6 +40,8 @@ public class CartController {
 	@Autowired
 	CryptoService cryptoService;
 	
+	final static String receiver_metamask_walletAddress = "0xB51C492e6dE5a858785fccAFa46F1DeF070a1b65";
+	
 	@GetMapping(value="/cart")
 	public String cartGet(Model model) {
 		Cart cart = cartService.getAuthenticatedUserCart();
@@ -82,7 +84,7 @@ public class CartController {
 	
 	@GetMapping(value="/checkout")
 	public String checkout(Model model, RedirectAttributes redirectAttributes) {
-		DecimalFormat decimalFormat = new DecimalFormat("#.######"); // Set to 6 decimal places or adjust as needed
+		DecimalFormat decimalFormat = new DecimalFormat("#.######"); // Set to 6 decimal places
 		boolean cartEmpty = cartService.isCartEmpty();
 		double total;
 		double ethToInrRate;
@@ -96,6 +98,7 @@ public class CartController {
 		String formattedEthAmount = decimalFormat.format(total / ethToInrRate);
 		model.addAttribute("cartCount", cartService.getCartCount());
 		model.addAttribute("total", total);
+		model.addAttribute("recipientAddress", receiver_metamask_walletAddress);
 		model.addAttribute("eth_inr_rate", ethToInrRate);
 		model.addAttribute("ethAmount", formattedEthAmount);
 		return "checkout";

@@ -172,8 +172,8 @@ public class PaymentController {
 		//TODO: Save the order details in the database
 		logger.info("transaction hash: {}\n sender: {}\n recipient: {}\n amount: {}ETH\n",
 				txnReceipt.getTransactionHash(), 
-				txnReceipt.getSenderAddress(), 
-				txnReceipt.getRecipientAddress(), 
+				txnReceipt.getSenderAddress(),
+				txnReceipt.getRecipientAddress(),
 				txnReceipt.getEthAmount()
 				);
 		
@@ -181,8 +181,10 @@ public class PaymentController {
 	}
 	
 	@GetMapping(value="/orderConfirm")
-	public String orderComplete(Model model) {
+	public String orderComplete(@RequestParam("transactionHash") String txnHash, @RequestParam("total") String total, Model model) {
 		model.addAttribute("cart", cartService.getAuthenticatedUserCart().getCartProducts());
+		model.addAttribute("total", total);
+		model.addAttribute("txnHash", txnHash);
 		return "orderConfirm";
 	}
 }
