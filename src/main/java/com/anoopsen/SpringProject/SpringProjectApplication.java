@@ -1,7 +1,10 @@
 package com.anoopsen.SpringProject;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,7 @@ import com.twilio.Twilio;
 import com.twilio.exception.TwilioException;
 
 import jakarta.annotation.PostConstruct;
+
 
 @SpringBootApplication
 @PropertySource("classpath:application.properties")  //this will allow spring security to locate the private key mentioned in application.properties for the below @Value
@@ -64,9 +68,14 @@ public class SpringProjectApplication {
 	}
 		
 	public static String getClassPath() throws URISyntaxException {
-		File path = new File(SpringProjectApplication.class.getProtectionDomain()
-						.getCodeSource().getLocation().toURI());
-			
-		return path.getPath();
+	    URI codeSourceUri = SpringProjectApplication.class
+	                            .getProtectionDomain()
+	                            .getCodeSource()
+	                            .getLocation()
+	                            .toURI();
+	    
+	    // Convert to a Path (works whether it's a JAR or a directory)
+	    Path path = Paths.get(codeSourceUri).getParent(); // Parent directory of the JAR or classes
+	    return path.toString();
 	}
 }
