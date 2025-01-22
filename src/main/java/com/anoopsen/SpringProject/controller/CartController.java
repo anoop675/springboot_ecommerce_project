@@ -82,25 +82,36 @@ public class CartController {
 	    return "redirect:/VITproject/cart";
 	}
 	
-	@GetMapping(value="/checkout")
+	@GetMapping(value = "/checkout")
 	public String checkout(Model model, RedirectAttributes redirectAttributes) {
-		DecimalFormat decimalFormat = new DecimalFormat("#.######"); // Set to 6 decimal places
-		boolean cartEmpty = cartService.isCartEmpty();
-		double total;
-		double ethToInrRate;
-		if(cartEmpty) {
-	    	logger.info("Cart is Empty?: "+cartEmpty);
+	    DecimalFormat decimalFormat = new DecimalFormat("#.######"); // Set to 6 decimal places
+	    boolean cartEmpty = cartService.isCartEmpty();
+
+	    if (cartEmpty) {
+	        logger.info("Cart is Empty?: {}", cartEmpty);
 	        redirectAttributes.addFlashAttribute("error_message", "Sorry, your cart is empty");
-	        return "redirect:/VITproject/cart";	
+	        return "redirect:/VITproject/cart";
 	    }
-		total = cartService.getCartTotal();
-		ethToInrRate = cryptoService.getEthToInrRate(); //fetches real-time Ether(ETH) to INR 
-		String formattedEthAmount = decimalFormat.format(total / ethToInrRate);
-		model.addAttribute("cartCount", cartService.getCartCount());
-		model.addAttribute("total", total);
-		model.addAttribute("recipientAddress", receiver_metamask_walletAddress);
-		model.addAttribute("eth_inr_rate", ethToInrRate);
-		model.addAttribute("ethAmount", formattedEthAmount);
-		return "checkout";
+
+	    double total = cartService.getCartTotal();
+	    double ethToInrRate = cryptoService.getEthToInrRate(); // Fetch real-time ETH-INR rate
+	    /*
+	    if (ethToInrRate <= 0) { // Handle invalid rate
+	        logger.error("Invalid ETH-INR rate: {}", ethToInrRate);
+	        model.addAttribute("error_message", "Unable to fetch Ethereum rate. Please try again later.");
+	        return "checkout";
+	    }*/
+
+	    String formattedEthAmount = decimalFormat.format(total / ethToInrRate);
+	    logger.info("Total: {}, ETH-INR Rate: {}, ETH Amount: {}", total, ethToInrRate, formattedEthAmount);
+
+	    model.addAttribute("cartCount", cartService.getCartCount());
+	    model.addAttribute("total", total);
+	    model.addAttribute("recipientAddress", receiver_metamask_walletAddress);
+	    model.addAttribute("eth_inr_rate", ethToInrRate);
+	    model.addAttribute("ethAmount", formattedEthAmount);
+
+	    return "checkout";
 	}
+
 }

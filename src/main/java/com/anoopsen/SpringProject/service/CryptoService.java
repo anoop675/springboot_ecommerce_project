@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -21,19 +22,20 @@ public class CryptoService {
     @Value("${crypto.api.url}")
     private String apiUrl;
     
-    @Value("${crypto.user.agent}")
-    private String userAgent;
+   //@Value("${crypto.user.agent}")
+   // private String userAgent;
 
     @Autowired
     private RestTemplate restTemplate;
 
     public double getEthToInrRate() {
-        String url = apiUrl + "/simple/price?ids=ethereum&vs_currencies=inr";
-
-        try {
+        //String url = apiUrl + "/simple/price?ids=ethereum&vs_currencies=inr";
+    	String url = apiUrl + "/data/price?fsym=ETH&tsyms=BTC,INR";
+    	
+    	try {
             // Create headers
             HttpHeaders headers = new HttpHeaders();
-            headers.set("User-Agent", userAgent);
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
             // Create HTTP entity
             HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -43,8 +45,8 @@ public class CryptoService {
 
             // Parse JSON response
             JSONObject jsonObject = new JSONObject(response.getBody());
-            logger.info("Equivalent ETH INR amount: {}INR",jsonObject.getJSONObject("ethereum").getDouble("inr"));
-            return jsonObject.getJSONObject("ethereum").getDouble("inr");
+            return jsonObject.getDouble("INR");
+
         } catch (HttpClientErrorException.TooManyRequests e) {
             System.err.println("Rate limit exceeded. Please try again later.");
             return -1; // Fallback value
@@ -52,5 +54,6 @@ public class CryptoService {
             System.err.println("An error occurred: " + e.getMessage());
             return -1; // Fallback value
         }
+    	
     }
 }
