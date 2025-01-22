@@ -10,9 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class CryptoService {
+	
+	Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${crypto.api.url}")
     private String apiUrl;
@@ -39,6 +43,7 @@ public class CryptoService {
 
             // Parse JSON response
             JSONObject jsonObject = new JSONObject(response.getBody());
+            logger.info("Equivalent ETH INR amount: {}INR",jsonObject.getJSONObject("ethereum").getDouble("inr"));
             return jsonObject.getJSONObject("ethereum").getDouble("inr");
         } catch (HttpClientErrorException.TooManyRequests e) {
             System.err.println("Rate limit exceeded. Please try again later.");
