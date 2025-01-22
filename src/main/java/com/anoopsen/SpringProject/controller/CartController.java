@@ -70,15 +70,17 @@ public class CartController {
 	}
 	
 	@GetMapping(value="/addToCart/{id}")
-	public String addToCart(@PathVariable int id) {
+	public String addToCart(@PathVariable int id, RedirectAttributes attr) {
 		cartService.addProductToCart(productService.get_productById(id));
-		return "redirect:/VITproject/shop";
+		attr.addFlashAttribute("message", "Item added to your cart! Please check your shopping cart");
+		return "redirect:/VITproject/shop/viewproduct/{id}";
 	}
 	
 	@GetMapping(value = "/cart/removeItem/{id}/{quantity}")
-	public String cartItemRemove(@PathVariable int id, @PathVariable int quantity) {
+	public String cartItemRemove(@PathVariable int id, @PathVariable int quantity, RedirectAttributes attr) {
 		//System.out.println(cartService.getAuthenticatedUserCart().getCartProducts().stream().filter(cp -> cp.getProduct().getId() == id).findFirst().get());
 	    cartService.removeProductFromCart(id, quantity);
+	    attr.addFlashAttribute("message", "Your cart has been updated");
 	    return "redirect:/VITproject/cart";
 	}
 	

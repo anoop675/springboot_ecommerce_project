@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <title>E-commerce Shop</title>
 	<style>
@@ -58,6 +59,22 @@
 
 <main>
     <div class="container" style="padding-top: 70px">
+		<!-- Fixed Alert Box -->
+		<div 
+		    class="alert alert-success alert-dismissible fade show position-fixed start-50 translate-middle-x" 
+		    style="z-index: 1050; top: 90px; width: 90%; max-width: 600px;" 
+		    th:if="${message}">
+		    <span th:text="${message}" style="flex-grow: 1;"></span>
+		    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	
+		<div 
+		    class="alert alert-danger alert-dismissible fade show position-fixed start-50 translate-middle-x" 
+		    style="z-index: 1050; top: 90px; width: 90%; max-width: 600px;" 
+		    th:if="${error_message}">
+		    <span th:text="${error_message}" style="flex-grow: 1;"></span>
+		    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
 
         <!--Section: Block Content-->
         <section class="mt-5 mb-4">
@@ -101,6 +118,10 @@
                                     </div>
                                 </div>
                             </div>-->
+							<h4 class="text-center" th:if="${#lists.isEmpty(cart)}">Looks like your cart is empty</h4>
+							<p class="text-center" style="margin-top: 10px;" th:if="${#lists.isEmpty(cart)}">
+							   <a href="./shop.html" th:href="@{/VITproject/shop}">Shop</a> for exciting products
+							</p>
 							<div class="row mb-4" th:each="cartProduct, iStat : ${cart}">
 							    <div class="col-md-5 col-lg-3 col-xl-3">
 							        <div class="mb-3 mb-md-0">
@@ -241,6 +262,7 @@
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldjDDvf6ntkA6B1QYZZjRFpurt9TtB6UJm1wDXg" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-3qaqj0lcgkHh7uWfhA5MXvLIbK39YzuFHz53CLxZCrq3GmC5iT9u0NQBeinVGAaI" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
