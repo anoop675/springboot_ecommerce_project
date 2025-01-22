@@ -5,4 +5,8 @@ RUN mvn clean package -DskipTests
 FROM openjdk:17.0.1-jdk-slim
 COPY --from=build /target/SpringProject-0.0.1-SNAPSHOT.jar SpringProject.jar
 EXPOSE 8080
+<<<<<<< HEAD
 ENTRYPOINT ["java", "-jar", "SpringProject.jar"]
+=======
+ENTRYPOINT ["java", "-jar", "SpringProject.jar"]
+>>>>>>> infura-integration

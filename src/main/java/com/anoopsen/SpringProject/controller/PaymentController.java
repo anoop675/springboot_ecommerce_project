@@ -169,13 +169,12 @@ public class PaymentController {
     }*/
 	@PostMapping(value="/recordTransaction")
 	public ResponseEntity<String> recordTransactionAndShow(@RequestBody TransactionReceiptDto txnReceipt) {
-		//TODO: Save the order details in the database
 		logger.info("transaction hash: {}\n sender: {}\n recipient: {}\n amount: {}ETH\n",
 				txnReceipt.getTransactionHash(), 
 				txnReceipt.getSenderAddress(),
 				txnReceipt.getRecipientAddress(),
 				txnReceipt.getEthAmount()
-				);
+			);
 		
 		return ResponseEntity.ok("transaction is successful by metamask");
 	}
