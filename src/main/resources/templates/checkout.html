@@ -282,11 +282,6 @@
                         </label>
                     </div>
                     
-					<form th:action="@{/VITproject/connect}" method="post">
-					    <label for="generateWallet">Check connection
-					        <button type="submit">here</button>
-					    </label>
-					</form>
 					<p th:text="${response}" th:if="${response}"></p>
 					<p th:text="${error}" th:if="${error}"></p>
                 </form>
@@ -297,6 +292,11 @@
                 
                 <!-- Confirm Payment Button (Submits the Form) -->
                 <button type="submit" form="ethTransactionForm" class="btn btn-primary">Pay in ETH</button>
+				<form th:action="@{/VITproject/connect}" method="post">
+					<label for="generateWallet">Check connection
+					<button type="submit">here</button>
+					</label>
+				</form>
             </div>
         </div>
     </div>
