@@ -97,6 +97,10 @@ public class SecurityConfig{
 							.invalidateHttpSession(true)
 							.deleteCookies("JSESSIONID")
 				)
+	            .sessionManagement(session -> session
+	                    .invalidSessionUrl("/VITproject/login?sessionExpired") // Redirect to login with a parameter on timeout
+	                    .maximumSessions(1) //limits one session per user
+	            )
 				.exceptionHandling(exception ->
 					exception.accessDeniedPage("/VITproject/login")
 				)

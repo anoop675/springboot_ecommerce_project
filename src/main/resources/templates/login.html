@@ -208,7 +208,8 @@
         </form>
     </div>
 </div>
-<!-- Modal Structure for Invalid Login -->
+
+<!-- Modal for Invalid Login -->
 <div class="modal fade" id="loginErrorModal" tabindex="-1" role="dialog" aria-labelledby="loginErrorModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -228,9 +229,33 @@
   </div>
 </div>
 
+<!-- Modal for Session Expired -->
+<div class="modal fade" id="sessionExpiredModal" tabindex="-1" role="dialog" aria-labelledby="sessionExpiredModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sessionExpiredModalLabel">Session Expired</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+      </div>
+      <div class="modal-body">
+        Your session has expired. Please log in again to continue.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- JavaScript for Bootstrap and jQuery -->
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <!-- Show error if present -->
 <script>
     $(document).ready(function(){
@@ -239,6 +264,13 @@
            //$('#loginError').collapse('show');
 		   $('#loginErrorModal').modal('show');
         }
+    });
+</script>
+
+<script th:if="${param.sessionExpired}" th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const sessionExpiredModal = new bootstrap.Modal(document.getElementById('sessionExpiredModal'), {});
+        sessionExpiredModal.show();
     });
 </script>
 
