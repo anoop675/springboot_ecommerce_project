@@ -46,6 +46,8 @@ import com.anoopsen.SpringProject.dto.TransactionReceiptDto;
 import com.anoopsen.SpringProject.dto.WalletTransactionDto1;
 import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.User;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 @RequestMapping(value="/VITproject")
@@ -72,46 +74,55 @@ public class PaymentController {
 	
 	@Autowired
 	PaymentService paymentService;
-	
+
 	@PostMapping(value="/connect")
-    public String connect(RedirectAttributes attr) {
-		JSONObject payload = new JSONObject();
-		HttpHeaders headers = new HttpHeaders();
-        try {
-            
-            payload.put("infura_project_id", infuraProjectId);
+	public String connect(RedirectAttributes attr) {
+	    JSONObject payload = new JSONObject();
+	    HttpHeaders headers = new HttpHeaders();
+	    try {
+	        payload.put("infura_project_id", infuraProjectId);
 
-            
-            headers.set("Content-Type", "application/json");
+	        headers.set("Content-Type", "application/json");
 
-            HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
+	        HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
 
-            RestTemplate restTemplate = new RestTemplate();
-            String url = EthPaymentApiUrl + "/connect";
+	        RestTemplate restTemplate = new RestTemplate();
+	        String url = EthPaymentApiUrl + "/connect";
 
-            ResponseEntity<String> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-            );
+	        ResponseEntity<String> response = restTemplate.exchange(
+	            url,
+	            HttpMethod.POST,
+	            requestEntity,
+	            String.class
+	        );
 
-            String jsonResponse = response.getBody();
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            attr.addAttribute("response", jsonObject);
-            attr.addAttribute("showModal", true); // Indicating to show modal
-            
-            logger.info("Connection status: {} with body:\n{}", response.getStatusCode(), jsonResponse);
+	        String jsonResponse = response.getBody();
 
+	        // Check if the response is 200 OK
+	        if (response.getStatusCode() == HttpStatus.OK) {
+	            String decodedResponse = URLDecoder.decode(jsonResponse, StandardCharsets.UTF_8); // URL-decode the response body before parsing
+	            JSONObject jsonObject = new JSONObject(decodedResponse);  // Now parse the decoded string as JSON
+	            String message = jsonObject.getString("message"); // Extract the message
 
-        } catch (Exception e) {
-            attr.addAttribute("showModal", false); // Indicating to show modal
-            attr.addAttribute("error", "Error while connecting: " + e.getMessage());
-            
-            e.printStackTrace();
-        }
-        return "redirect:/VITproject/checkout";
-    }
+	            attr.addFlashAttribute("response", message);
+	            attr.addFlashAttribute("showModal", true); // Indicating to show modal
+	        } 
+	        else {
+	            attr.addFlashAttribute("showModal", false); // Indicating not to show modal
+	            attr.addFlashAttribute("error", "Failed with status code: " + response.getStatusCode());
+	        }
+
+	        logger.info("Connection status: {} with body:\n{}", response.getStatusCode(), jsonResponse);
+
+	    } catch (Exception e) {
+	        attr.addAttribute("showModal", false); // Indicating not to show modal
+	        attr.addAttribute("error", "Error while connecting: " + e.getMessage());
+
+	        e.printStackTrace();
+	    }
+	    return "redirect:/VITproject/checkout";
+	}
+
 	
 	@PostMapping(value="/create-wallet")
 	public ResponseEntity<String> createWallet() {
