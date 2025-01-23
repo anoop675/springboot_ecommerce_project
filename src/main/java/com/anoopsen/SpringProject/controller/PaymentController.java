@@ -79,7 +79,7 @@ public class PaymentController {
 		HttpHeaders headers = new HttpHeaders();
         try {
             
-            payload.put("infuraProjectId", infuraProjectId);
+            payload.put("infura_project_id", infuraProjectId);
 
             
             headers.set("Content-Type", "application/json");
