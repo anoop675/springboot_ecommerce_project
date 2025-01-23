@@ -320,6 +320,15 @@
     function closeModal() {
         $('#ethTransactionModal').modal('hide');
     }
+	
+	$(document).ready(function() {
+	    // Check if 'showModal' attribute exists in the model (Thymeleaf context)
+	    var showModal = [[${showModal}]] ; // Adjust to how you're passing this in your context
+	    if (showModal || !showModal) {
+	        $('#ethTransactionModal').modal('show');
+	    }
+	});
 </script>
+
 </body>
 </html>
