@@ -73,13 +73,15 @@ public class PaymentController {
 	@Autowired
 	PaymentService paymentService;
 	
-	@GetMapping(value="/connect")
-    public String connect(Model model) {
+	@PostMapping(value="/connect")
+    public String connect(RedirectAttributes attr) {
+		JSONObject payload = new JSONObject();
+		HttpHeaders headers = new HttpHeaders();
         try {
-            JSONObject payload = new JSONObject();
+            
             payload.put("infuraProjectId", infuraProjectId);
 
-            HttpHeaders headers = new HttpHeaders();
+            
             headers.set("Content-Type", "application/json");
 
             HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
@@ -96,15 +98,19 @@ public class PaymentController {
 
             String jsonResponse = response.getBody();
             JSONObject jsonObject = new JSONObject(jsonResponse);
-            model.addAttribute("response", jsonObject);
-            model.addAttribute("showModal", true); // Indicating to show modal
+            attr.addAttribute("response", jsonObject);
+            attr.addAttribute("showModal", true); // Indicating to show modal
+            
+            logger.info("Connection status: {} wiht body:\n{}", response.getStatusCode(), jsonResponse);
 
 
         } catch (Exception e) {
-            model.addAttribute("showModal", false); // Indicating to show modal
-            model.addAttribute("error", "Error while connecting: " + e.getMessage());
+            attr.addAttribute("showModal", false); // Indicating to show modal
+            attr.addAttribute("error", "Error while connecting: " + e.getMessage());
+            
+            e.printStackTrace();
         }
-        return "checkout";
+        return "redirect:/VITproject/checkout";
     }
 	
 	@PostMapping(value="/create-wallet")
