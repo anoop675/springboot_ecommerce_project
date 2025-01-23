@@ -5,21 +5,28 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.core.Authentication;
@@ -36,6 +43,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.anoopsen.SpringProject.dto.PaytmDetails;
 import com.anoopsen.SpringProject.dto.TransactionReceiptDto;
+import com.anoopsen.SpringProject.dto.WalletTransactionDto1;
 import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.User;
 
@@ -44,10 +52,15 @@ import com.anoopsen.SpringProject.model.User;
 public class PaymentController {
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
-	/*
+	
+	final static String receiver_metamask_walletAddress = "0xB51C492e6dE5a858785fccAFa46F1DeF070a1b65";
+	
+	final static String infuraProjectId = "dde4a14c79c34a43b17ebc32f22ce6a4";
+
+	
 	@Value("${ethpaymentapi.url}")
 	private String EthPaymentApiUrl;
-	*/
+	
 	@Autowired
 	CartRepo cartRepo;
 
@@ -59,114 +72,55 @@ public class PaymentController {
 	
 	@Autowired
 	PaymentService paymentService;
-	/*
-	@GetMapping(value="/payNow/eth")
-	public void paymentInEther() {
-		User thisUser = cartService.getAuthenticatedUserCart().getUser();
-		Optional<Cart> thisUserCart = cartRepo.findById(thisUser.getCart().getId());
-		
-		if(thisUserCart.isPresent()) {
-			double currentEthValue = cryptoService.getEthToInrRate();
-			double orderTotal = thisUserCart.get().getTotal();
-			double amountInEth = orderTotal / currentEthValue;
-			
-			logger.info("TODO: get wallet addresses from API and store in database, then call API (EthPaymentApiUrl)");
-			
-			paymentService.sendEthValue(EthPaymentApiUrl, amountInEth);
-		}
-		else {
-			System.out.println("Cart not found for user with name " + thisUser.getFirstName());
-		}
-	}*/
-	/*
-	@PostMapping("/recordTransaction")
-    public String recordTransaction(@RequestBody TransactionReceiptDto transactionDetails, Model model) {
-        // Process transaction details (e.g., save to database)
-        logger.info("Received transaction: " + transactionDetails);
-        model.addAttribute();
-        // Simulate saving transaction and returning response
-        return 
-    }*/
-	/*
-	@Autowired
-    private PaytmDetails paytmDetails;
-
-    @Value("${paytm.mobile}")
-    private String paytmMobile;
-
-    @Value("${paytm.email}")
-    private String paytmEmail;
-    
-    @PostMapping(value = "/paytm/make-payment")
-    public ModelAndView getPaymentRedirect(@RequestParam String orderId, 
-                                           @RequestParam String txnAmount, 
-                                           @RequestParam String customerId) throws Exception {
-        logger.info("Initiating payment for orderId: {}, amount: {}, customerId: {}", orderId, txnAmount, customerId);
-
-        // Set the Paytm payment URL for redirect
-        ModelAndView modelAndView = new ModelAndView("redirect:" + paytmDetails.getPaytmUrl());
-        TreeMap<String, String> parameters = new TreeMap<>();
-
-        // Populate Paytm parameters from configured details
-        paytmDetails.getDetails().forEach(parameters::put);
-        parameters.put("MOBILE_NO", paytmMobile);
-        parameters.put("EMAIL", paytmEmail);
-        parameters.put("ORDER_ID", orderId);
-        parameters.put("TXN_AMOUNT", txnAmount);
-        parameters.put("CUST_ID", customerId);
-
-        // Generate the checksum to secure the transaction
-        String checkSum = getCheckSum(parameters);
-        parameters.put("CHECKSUMHASH", checkSum);
-
-        modelAndView.addAllObjects(parameters);
-        return modelAndView;
-    }
-    
-    @PostMapping(value = "/paytm/payment-response")
-    public ModelAndView getPaymentResponseRedirect(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView("redirect:http://localhost:8080/#/payment"); // Redirect to payment result page
-        Map<String, String[]> mapData = request.getParameterMap();
-        TreeMap<String, String> parameters = new TreeMap<>();
-        String paytmChecksum = "";
-
-        // Extract parameters from the response
-        for (Entry<String, String[]> entry : mapData.entrySet()) {
-            if ("CHECKSUMHASH".equalsIgnoreCase(entry.getKey())) {
-                paytmChecksum = entry.getValue()[0];
-            } else {
-                parameters.put(entry.getKey(), entry.getValue()[0]);
-            }
-        }
-
-        // Verify the checksum and determine the payment result
-        String result;
+	
+	@PostMapping(value="/connect")
+    public String connect(Model model) {
         try {
-            boolean isValidChecksum = validateCheckSum(parameters, paytmChecksum);
-            if (isValidChecksum && "01".equals(parameters.get("RESPCODE"))) {
-                result = "Payment Successful";
-            } else if (isValidChecksum) {
-                result = "Payment Failed";
-            } else {
-                result = "Checksum Mismatched";
-            }
+            JSONObject payload = new JSONObject();
+            payload.put("infuraProjectId", infuraProjectId);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+
+            HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            String url = EthPaymentApiUrl + "/connect";
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+            );
+
+            String jsonResponse = response.getBody();
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            model.addAttribute("response", jsonObject);
+            model.addAttribute("showModal", true); // Indicating to show modal
+
+
         } catch (Exception e) {
-            result = "Error: " + e.getMessage();
+            model.addAttribute("showModal", false); // Indicating to show modal
+            model.addAttribute("error", "Error while connecting: " + e.getMessage());
         }
-
-        modelAndView.addObject("result", result);
-        parameters.remove("CHECKSUMHASH"); // Remove checksum from parameters for display
-        modelAndView.addObject("parameters", parameters);
-        return modelAndView;
+        return "checkout";
     }
-
-    private boolean validateCheckSum(TreeMap<String, String> parameters, String paytmChecksum) throws Exception {
-        return PaytmChecksum.verifySignature(parameters, paytmDetails.getMerchantKey(), paytmChecksum);
-    }
-    
-    private String getCheckSum(TreeMap<String, String> parameters) throws Exception {
-        return PaytmChecksum.generateSignature(parameters, paytmDetails.getMerchantKey());
-    }*/
+	
+	@PostMapping(value="/create-wallet")
+	public ResponseEntity<String> createWallet() {
+		
+		
+		return ResponseEntity.ok("Wallet created successfully!");
+	}
+	
+	@PostMapping(value="/perform-transaction")
+	public ResponseEntity<String> performTransaction(@ModelAttribute WalletTransactionDto1 walletTransactionDto1) {
+		
+		
+		return ResponseEntity.ok("Transaction is done successfully!");
+	}
+	
 	@PostMapping(value="/recordTransaction")
 	public ResponseEntity<String> recordTransactionAndShow(@RequestBody TransactionReceiptDto txnReceipt) {
 		logger.info("transaction hash: {}\n sender: {}\n recipient: {}\n amount: {}ETH\n",

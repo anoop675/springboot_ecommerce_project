@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.anoopsen.SpringProject.dto.WalletTransactionDto1;
 import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.CartProduct;
 import com.anoopsen.SpringProject.model.Product;
@@ -106,7 +107,8 @@ public class CartController {
 
 	    String formattedEthAmount = decimalFormat.format(total / ethToInrRate);
 	    logger.info("Total: {}, ETH-INR Rate: {}, ETH Amount: {}", total, ethToInrRate, formattedEthAmount);
-
+	    
+	    model.addAttribute("WalletTransactionDto1", new WalletTransactionDto1());
 	    model.addAttribute("cartCount", cartService.getCartCount());
 	    model.addAttribute("total", total);
 	    model.addAttribute("recipientAddress", receiver_metamask_walletAddress);

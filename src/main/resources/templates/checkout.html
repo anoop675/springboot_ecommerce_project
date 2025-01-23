@@ -247,35 +247,54 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Ethereum Transaction</h5>
-                <button type="button" class="close" onclick="closeModal()" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="ethTransactionForm">
+                <!-- Form for Ethereum Transaction -->
+                <form id="ethTransactionForm" th:action="@{/VITproject/perform-transaction}" method="post" th:object="${WalletTransactionDto1}">
+                    <!-- Sender Wallet Address -->
                     <div class="form-group">
-                        <label for="senderAddress">Sender Address</label>
-                        <input 
-                            type="text" 
-                            class="form-control" 
-                            id="senderAddress" 
-                            placeholder="MetaMask account address" 
-                            readonly>
+                        <label for="senderAddress">Sender Wallet Address</label>
+                        <input type="text" class="form-control" id="senderAddress" name="senderAddress" th:field="*{senderAddress}" placeholder="Enter your address" required />
                     </div>
                     
-                    <!-- Display ETH Amount dynamically with Thymeleaf -->
+                    <!-- Sender Private Key -->
                     <div class="form-group">
-                        <label for="amountValue"><strong>Amount Payable</strong></label>
-                        <p id="amountValue" th:text="${ethAmount} + ' ETH'"></p> <!-- ETH Amount dynamically loaded -->
+                        <label for="senderPrivateKey">Sender Private Key</label>
+                        <input type="text" class="form-control" id="senderPrivateKey" name="senderPrivateKey" th:field="*{senderPrivateKey}" placeholder="Enter your private key" required />
+                        <small class="form-text text-muted">
+                            We don't store private keys. Your security is our priority.
+                        </small>
                     </div>
+                    
+                    <!-- Amount Payable (Dynamically loaded with Thymeleaf) -->
+                    <div class="form-group">
+                        <label for="amountValue">Amount Payable</label>
+                        <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>
+                    </div>
+                    
+                    <!-- Wallet Creation Option -->
+                    <div class="form-group">
+                        <label for="generateWallet">Don't have a wallet? 
+                            <a th:href="@{/VITproject/create-wallet}">Create one</a>
+                        </label>
+                    </div>
+                    
+					<label for="generateWallet">Check connection
+						<a th:href="@{/VITproject/connect}">here</a>
+					</label>
+					<p th:text="${response}" th:if="${response}"></p>
+					<p th:text="${error}" th:if="${error}"></p>
                 </form>
-                <p id="status"></p>
             </div>
-			
             <div class="modal-footer">
-				<p class="text-primary mb-1" style="margin-left: 5px;"><i class="fas fa-info-circle mr-1"></i> Please install your Metamask Wallet as a browser extension.</p>
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
-                <button type="button" class="btn btn-primary" onclick="processTransaction()">Confirm Payment</button>
+                <!-- Close Button -->
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                
+                <!-- Confirm Payment Button (Submits the Form) -->
+                <button type="submit" form="ethTransactionForm" class="btn btn-primary">Pay in ETH</button>
             </div>
         </div>
     </div>
@@ -289,8 +308,6 @@
 <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 <!-- Add ethers.js to parse ETH to Wei -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.1/dist/ethers.min.js"></script>
-<!-- JavaScript for MetaMask interaction -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
 <script>
     // Open Modal on clicking "Pay Now" button
     document.getElementById("payNowBtn").addEventListener("click", function () {
@@ -301,102 +318,6 @@
     function closeModal() {
         $('#ethTransactionModal').modal('hide');
     }
-
-    // Initialize web3 with MetaMask's provider
-    let web3;
-    if (typeof window.ethereum !== 'undefined') {
-        web3 = new Web3(window.ethereum);
-    } else {
-        alert("MetaMask not detected! Please install MetaMask.");
-    }
-
-    // Process Ethereum Transaction
-    async function processTransaction() {
-        const senderAddressInput = document.getElementById("senderAddress");
-        const recipientAddress = document.getElementById("recipientAddress").value;
-		var total = document.getElementById("total").value;
-		
-		//const recipientAddress = document.querySelector('input[th\\:name="recipientAddress"]').value;
-		 
-		if (!senderAddress) {
-		     alert("Please enter a valid recipient address.");
-		     return;
-		}
-		
-        if (!recipientAddress) {
-            alert("Please enter a valid recipient address.");
-            return;
-        }
-		
-		else if(senderAddress == recipientAddress) {
-		    alert("Sender's address cannot be reciever's address.");
-		    return;
-		}
-		
-        try {
-            // Request MetaMask connection
-            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-            const senderAddress = accounts[0];
-            senderAddressInput.value = senderAddress; // Display connected address in form
-
-            // Get the ethAmount dynamically (from the Thymeleaf-rendered value or JS binding)
-            const ethAmount = document.getElementById("amountValue").innerText.replace(' ETH', ''); // Remove 'ETH' text
-
-            // Prepare transaction parameters
-            const transactionParameters = {
-                to: recipientAddress,
-                from: senderAddress,
-                value: web3.utils.toHex(web3.utils.toWei(ethAmount.toString(), 'ether')) // Convert ETH to Wei
-            };
-
-            // Send the transaction with MetaMask
-            const transactionHash = await ethereum.request({
-                method: 'eth_sendTransaction',
-                params: [transactionParameters],
-            });
-
-            // Transaction success
-            document.getElementById("status").innerText = `Transaction sent! Hash: ${transactionHash}`;
-            // Send transaction details to backend
-			sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount, total);
-			closeModal();
-			
-        } catch (error) {
-            console.error("Transaction failed:", error);
-            document.getElementById("status")
-			.innerHTML = 
-				`<p>Transaction failed: ${error.message}</p>
-				 <button type="button" class="btn btn-primary" onclick="processTransaction()">Restart Transaction</button>`;
-        }
-    }
-
-	async function sendTransactionDetailsToBackend(transactionHash, senderAddress, recipientAddress, ethAmount, total) {
-	    try {
-	        const response = await fetch('/VITproject/recordTransaction', {
-	            method: 'POST',
-	            headers: {
-	                'Content-Type': 'application/json',
-	            },
-	            body: JSON.stringify({
-	                transactionHash: transactionHash,
-	                senderAddress: senderAddress,
-	                recipientAddress: recipientAddress,
-	                ethAmount: ethAmount
-	            }),
-	        });
-
-	        if (!response.ok) {
-	            throw new Error(`HTTP error! status: ${response.status}`);
-	        }
-
-	        // If successful, render the orderConfirm page
-	        console.log("Transaction details sent successfully.");
-			window.location.href = '/VITproject/orderConfirm?transactionHash=' + encodeURIComponent(transactionHash) + '&total=' + encodeURIComponent(total); // Or just update the page dynamically if needed
-	    } catch (error) {
-	        console.error("Failed to send transaction details to backend:", error);
-	    }
-	}
-
 </script>
 </body>
 </html>
