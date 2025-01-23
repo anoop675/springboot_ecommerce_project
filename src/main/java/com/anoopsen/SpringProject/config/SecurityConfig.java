@@ -55,16 +55,6 @@ public class SecurityConfig{
 	CustomAuthenticationSuccessHandler authHandler;
 	
 	@Bean
-    public void addCorsMappings(CorsRegistry registry) {
-        // This method will allow CORS requests from the external server "ethereum-sepolia-project.onrender.com"
-        registry.addMapping("/**")
-                .allowedOrigins("https://ethereum-sepolia-project.onrender.com") // Add the external server's URL here
-                .allowedMethods("GET", "POST") // Allow only GET and POST methods
-                .allowedHeaders("*") // Allow any headers
-                .allowCredentials(true); // Allow cookies or credentials if needed
-    }
-	
-	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http
 				.csrf(csrf ->
@@ -84,7 +74,7 @@ public class SecurityConfig{
 								.requestMatchers(new AntPathRequestMatcher("/postgres/**")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/oauth2/authorization/google")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject/admin/**")).hasRole("ADMIN")
-								.requestMatchers(new AntPathRequestMatcher("/connect")).hasRole("ADMIN")
+								.requestMatchers(new AntPathRequestMatcher("/connect")).permitAll()
 								.anyRequest().authenticated()
 				)
 				.formLogin(form ->
