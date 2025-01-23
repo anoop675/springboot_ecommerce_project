@@ -241,6 +241,8 @@
         </div>
     </section>
 </div>
+<input type="hidden" id="showModal" value="[[${showModal}]]" />
+
 <!-- Modal Structure -->
 <div id="ethTransactionModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -322,9 +324,11 @@
     }
 	
 	$(document).ready(function() {
-	    // Check if 'showModal' attribute exists in the model (Thymeleaf context)
-	    var showModal = [[${showModal}]] ; // Adjust to how you're passing this in your context
-	    if (showModal || !showModal) {
+	    // Get the value of the hidden input field
+	    var showModal = $('#showModal').val();  // This will be a string, either "true" or "false"
+
+	    // Convert it to a boolean
+	    if (showModal === 'true') {
 	        $('#ethTransactionModal').modal('show');
 	    }
 	});
