@@ -282,9 +282,11 @@
                         </label>
                     </div>
                     
-					<label for="generateWallet">Check connection
-						<a th:href="@{/VITproject/connect}">here</a>
-					</label>
+					<form th:action="@{/VITproject/connect}" method="post">
+					    <label for="generateWallet">Check connection
+					        <button type="submit">here</button>
+					    </label>
+					</form>
 					<p th:text="${response}" th:if="${response}"></p>
 					<p th:text="${error}" th:if="${error}"></p>
                 </form>
