@@ -1,5 +1,6 @@
 package com.anoopsen.SpringProject.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
@@ -75,17 +77,18 @@ public class PaymentController {
 	@Autowired
 	PaymentService paymentService;
 
-	@PostMapping(value="/connect")
-	public String connect(RedirectAttributes attr) {
+	@PostMapping(value = "/connect")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> connect() {
 	    JSONObject payload = new JSONObject();
 	    HttpHeaders headers = new HttpHeaders();
+	    Map<String, Object> responseMap = new HashMap<>();
+	    
 	    try {
 	        payload.put("infura_project_id", infuraProjectId);
-
 	        headers.set("Content-Type", "application/json");
 
 	        HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
-
 	        RestTemplate restTemplate = new RestTemplate();
 	        String url = EthPaymentApiUrl + "/connect";
 
@@ -100,27 +103,19 @@ public class PaymentController {
 
 	        // Check if the response is 200 OK
 	        if (response.getStatusCode() == HttpStatus.OK) {
-	            String decodedResponse = URLDecoder.decode(jsonResponse, StandardCharsets.UTF_8); // URL-decode the response body before parsing
-	            JSONObject jsonObject = new JSONObject(decodedResponse);  // Now parse the decoded string as JSON
-	            String message = jsonObject.getString("message"); // Extract the message
-
-	            attr.addFlashAttribute("response", message);
-	            attr.addFlashAttribute("showModal", true); // Indicating to show modal
-	        } 
-	        else {
-	            attr.addFlashAttribute("showModal", false); // Indicating not to show modal
-	            attr.addFlashAttribute("error", "Failed with status code: " + response.getStatusCode());
+	            String decodedResponse = URLDecoder.decode(jsonResponse, StandardCharsets.UTF_8);
+	            JSONObject jsonObject = new JSONObject(decodedResponse);
+	            String message = jsonObject.getString("message");
+	            responseMap.put("response", message);
+	        } else {
+	            responseMap.put("error", "Failed with status code: " + response.getStatusCode());
 	        }
-
-	        logger.info("Connection status: {} with body:\n{}", response.getStatusCode(), jsonResponse);
-
 	    } catch (Exception e) {
-	        attr.addAttribute("showModal", false); // Indicating not to show modal
-	        attr.addAttribute("error", "Error while connecting: " + e.getMessage());
-
+	        responseMap.put("error", "Error while connecting: " + e.getMessage());
 	        e.printStackTrace();
 	    }
-	    return "redirect:/VITproject/checkout";
+
+	    return ResponseEntity.ok(responseMap);
 	}
 
 	

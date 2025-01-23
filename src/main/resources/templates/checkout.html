@@ -284,25 +284,19 @@
                         </label>
                     </div>
                     
-					<p th:text="${response}" th:if="${response}"></p>
-					<p th:text="${error}" th:if="${error}"></p>
+                    <p id="responseMessage" th:text="${response}" th:if="${response}"></p>
+                    <p id="errorMessage" th:text="${error}" th:if="${error}"></p>
                 </form>
             </div>
             <div class="modal-footer">
-                <!-- Close Button -->
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                
-                <!-- Confirm Payment Button (Submits the Form) -->
                 <button type="submit" form="ethTransactionForm" class="btn btn-primary">Pay in ETH</button>
-				<form th:action="@{/VITproject/connect}" method="post">
-					<label for="generateWallet">Check connection
-					<button type="submit">here</button>
-					</label>
-				</form>
+                <button type="button" class="btn btn-info" id="connectButton">Check Connection</button>
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- Bootstrap, jQuery, and Web3 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
@@ -324,16 +318,39 @@
     }
 	
 	$(document).ready(function() {
-	  // Get the value of the hidden input field
-	  var showModal = $('#showModal').val();
+	    // Show the modal based on the 'showModal' attribute
+	    var showModal = $('#showModal').val();  // Assuming showModal is set dynamically via Thymeleaf
+	    if (showModal === 'true') {
+	        $('#ethTransactionModal').modal('show');
+	    }
 
-	  // Convert the string value to a boolean
-	  var showModalAsBoolean = showModal === 'true';
+	    // AJAX call for checking the connection when "Check Connection" is clicked
+	    $('#connectButton').click(function() {
+	        $.ajax({
+	            url: '/VITproject/connect',  // The endpoint to handle connection
+	            type: 'POST',
+	            dataType: 'json',
+	            success: function(response) {
+	                // Update the modal content based on response
+	                if (response.response) {
+	                    $('#responseMessage').text(response.response);  // Show success message
+	                    $('#errorMessage').empty();  // Clear error message
+	                } else if (response.error) {
+	                    $('#errorMessage').text(response.error);  // Show error message
+	                    $('#responseMessage').empty();  // Clear success message
+	                }
 
-	  // Now you can use the boolean value in your conditional statement
-	  if (showModalAsBoolean) {
-	    $('#ethTransactionModal').modal('show');
-	  }
+	                // Optionally, show the modal if not already shown
+	                $('#ethTransactionModal').modal('show');
+	            },
+	            error: function(xhr, status, error) {
+	                // Handle any AJAX errors
+	                $('#errorMessage').text('Error: Unable to connect. Please try again later.');
+	                $('#responseMessage').empty();
+	                $('#ethTransactionModal').modal('show');
+	            }
+	        });
+	    });
 	});
 </script>
 
