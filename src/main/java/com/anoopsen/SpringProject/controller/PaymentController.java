@@ -73,7 +73,7 @@ public class PaymentController {
 	@Autowired
 	PaymentService paymentService;
 	
-	@PostMapping(value="/connect")
+	@GetMapping(value="/connect")
     public String connect(Model model) {
         try {
             JSONObject payload = new JSONObject();
