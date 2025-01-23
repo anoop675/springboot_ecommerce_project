@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.rememberme.TokenBasedReme
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices.RememberMeTokenAlgorithm;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import com.anoopsen.SpringProject.service.CustomUserDetailsService;
 
@@ -54,6 +55,16 @@ public class SecurityConfig{
 	CustomAuthenticationSuccessHandler authHandler;
 	
 	@Bean
+    public void addCorsMappings(CorsRegistry registry) {
+        // This method will allow CORS requests from the external server "ethereum-sepolia-project.onrender.com"
+        registry.addMapping("/**")
+                .allowedOrigins("https://ethereum-sepolia-project.onrender.com") // Add the external server's URL here
+                .allowedMethods("GET", "POST") // Allow only GET and POST methods
+                .allowedHeaders("*") // Allow any headers
+                .allowCredentials(true); // Allow cookies or credentials if needed
+    }
+	
+	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http
 				.csrf(csrf ->
@@ -73,6 +84,7 @@ public class SecurityConfig{
 								.requestMatchers(new AntPathRequestMatcher("/postgres/**")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/oauth2/authorization/google")).permitAll()
 								.requestMatchers(new AntPathRequestMatcher("/VITproject/admin/**")).hasRole("ADMIN")
+								.requestMatchers(new AntPathRequestMatcher("/connect")).hasRole("ADMIN")
 								.anyRequest().authenticated()
 				)
 				.formLogin(form ->

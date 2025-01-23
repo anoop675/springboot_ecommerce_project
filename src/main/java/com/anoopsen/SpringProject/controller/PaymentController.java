@@ -101,7 +101,7 @@ public class PaymentController {
             attr.addAttribute("response", jsonObject);
             attr.addAttribute("showModal", true); // Indicating to show modal
             
-            logger.info("Connection status: {} wiht body:\n{}", response.getStatusCode(), jsonResponse);
+            logger.info("Connection status: {} with body:\n{}", response.getStatusCode(), jsonResponse);
 
 
         } catch (Exception e) {
