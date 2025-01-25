@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -76,54 +77,148 @@ public class PaymentController {
 	
 	@Autowired
 	PaymentService paymentService;
-
-	@PostMapping(value = "/connect")
-	@ResponseBody
-	public ResponseEntity<Map<String, Object>> connect() {
-	    JSONObject payload = new JSONObject();
-	    HttpHeaders headers = new HttpHeaders();
-	    Map<String, Object> responseMap = new HashMap<>();
-	    
-	    try {
+	
+	
+	@PostMapping(value = "/paytm/make-payment")
+	public String paymentPage(RedirectAttributes attr) {
+		//TODO: integrate paytm or paypal payments gateway
+		attr.addFlashAttribute("error", "Sorry this payment method is currently unavailable. Please try a different payment method.");
+		return "redirect:/VITproject/checkout";
+	}
+	
+	public ResponseEntity<String> connectToInfura() {
+		
+		try {
+	        // Build the request
+	        JSONObject payload = new JSONObject();
 	        payload.put("infura_project_id", infuraProjectId);
-	        headers.set("Content-Type", "application/json");
-
+	        
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        
 	        HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
+	        
+	        // Send request using RestTemplate
 	        RestTemplate restTemplate = new RestTemplate();
 	        String url = EthPaymentApiUrl + "/connect";
-
-	        ResponseEntity<String> response = restTemplate.exchange(
-	            url,
-	            HttpMethod.POST,
-	            requestEntity,
-	            String.class
-	        );
-
-	        String jsonResponse = response.getBody();
-
-	        // Check if the response is 200 OK
-	        if (response.getStatusCode() == HttpStatus.OK) {
-	            String decodedResponse = URLDecoder.decode(jsonResponse, StandardCharsets.UTF_8);
-	            JSONObject jsonObject = new JSONObject(decodedResponse);
-	            String message = jsonObject.getString("message");
-	            responseMap.put("response", message);
-	        } else {
-	            responseMap.put("error", "Failed with status code: " + response.getStatusCode());
-	        }
-	    } catch (Exception e) {
-	        responseMap.put("error", "Error while connecting: " + e.getMessage());
-	        e.printStackTrace();
-	    }
-
-	    return ResponseEntity.ok(responseMap);
+	        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+	        
+	        if(response.getStatusCode() == HttpStatus.OK) {
+	        	return response;
+	        } 
+	        else {
+	        	return new ResponseEntity<>("Internal Server Error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+	        } 
+		}
+		catch(Exception e) {
+			return new ResponseEntity<>("Internal Server Error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+		}   
 	}
-
+	
+	@PostMapping(value = "/eth-payment")
+	public String showEthPaymentPage(@ModelAttribute WalletTransactionDto1 walletTransactionDto1, Model model, @RequestParam("ethAmount") String ethAmount, RedirectAttributes attr) {
+		ResponseEntity<String> response = this.connectToInfura();
+		
+	    if (response.getStatusCode() == HttpStatus.OK) { //if response is 200 OK, direct to Eth payment page
+	    	JSONObject jsonResponse = new JSONObject(response.getBody());
+	        logger.info("Connection successful: {}", jsonResponse.get("message"));
+	        model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
+	    	model.addAttribute("ethAmount", ethAmount);
+	    	model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
+	    	return "ethPayment";
+	    } 
+	    else {
+	        attr.addFlashAttribute("error", "Redirection to payment failed with status code: " + response.getStatusCode());
+	        return "redirect:/VITproject/checkout";
+	    }
+	}
 	
 	@PostMapping(value="/create-wallet")
-	public ResponseEntity<String> createWallet() {
+	public String createWallet(@ModelAttribute WalletTransactionDto1 walletTransactionDto1, Model model, @RequestParam("ethAmount") String ethAmount) {
+		ResponseEntity<String> connectionResponse = this.connectToInfura();
 		
+	    if (connectionResponse.getStatusCode() == HttpStatus.OK) { //if response is 200 OK, direct to Eth payment page
+	        String senderWalletAddress = "";
+	        String senderPrivateKey = "";
+	        
+	        try {
+		        // Build the request
+		        JSONObject payload = new JSONObject();
+		        payload.put("infura_project_id", infuraProjectId);
+		        
+		        HttpHeaders headers = new HttpHeaders();
+		        headers.setContentType(MediaType.APPLICATION_JSON);
+		        
+		        HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
+		        
+		        // Send request using RestTemplate
+		        RestTemplate restTemplate = new RestTemplate();
+		        String url = EthPaymentApiUrl + "/get-wallet";
+		        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+		        	
+		        JSONObject jsonResponse = new JSONObject(response.getBody());
+		        senderWalletAddress = jsonResponse.optString("sender_address", "");
+		        senderPrivateKey = jsonResponse.optString("sender_private_key", "");
+		        
+		        logger.info("Connection successful and received wallet address");
+		    	model.addAttribute("senderWalletAddress", senderWalletAddress);
+		    	model.addAttribute("senderPrivateKey", senderPrivateKey);
+	        }
+	        catch(Exception e) {
+		    	model.addAttribute("error", "Wallet generation failed: " + e.getStackTrace());
+	        }
+	    } 
+	    else 
+	    	model.addAttribute("error", "Wallet generation failed due to connection issue with status code: " + connectionResponse.getStatusCode());
+	    
+	   	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
+    	model.addAttribute("ethAmount", ethAmount);
+    	model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
+		return "ethPayment";
+	}
+	
+	@PostMapping(value="/check-wallet-balance")
+	public String checkWalletBalance(@ModelAttribute WalletTransactionDto1 walletTransactionDto1, Model model, @RequestParam("senderWalletAddress") String senderAddress, @RequestParam("ethAmount") String ethAmount) {
+		ResponseEntity<String> connectionResponse = this.connectToInfura();
 		
-		return ResponseEntity.ok("Wallet created successfully!");
+	    if (connectionResponse.getStatusCode() == HttpStatus.OK) { //if response is 200 OK, direct to Eth payment page
+	        String senderWalletBalance = "";
+	        
+	        try {
+		        // Build the request
+		        JSONObject payload = new JSONObject();
+		        payload.put("infura_project_id", infuraProjectId);
+		        payload.put("sender_address", senderAddress);
+		        
+		        HttpHeaders headers = new HttpHeaders();
+		        headers.setContentType(MediaType.APPLICATION_JSON);
+		        
+		        HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
+		        
+		        // Send request using RestTemplate
+		        RestTemplate restTemplate = new RestTemplate();
+		        String url = EthPaymentApiUrl + "/get-wallet-balance";
+		        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+		        	
+		        JSONObject jsonResponse = new JSONObject(response.getBody());
+		        senderWalletBalance = jsonResponse.optString("balance", "");
+		        
+		        logger.info("Connection successful and received wallet balance: "+senderWalletBalance);
+
+		    	model.addAttribute("balance", senderWalletBalance);
+	        }
+	        catch(Exception e) {
+		    	model.addAttribute("error", "Wallet generation failed: " + e.getStackTrace());
+		    	e.printStackTrace();
+	        }
+	    } 
+	    else 
+	    	model.addAttribute("error", "Wallet generation failed due to connection issue with status code: " + connectionResponse.getStatusCode());
+	           
+    	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
+    	model.addAttribute("ethAmount", ethAmount);
+    	model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
+		return "ethPayment";
 	}
 	
 	@PostMapping(value="/perform-transaction")

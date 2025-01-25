@@ -108,7 +108,6 @@ public class CartController {
 	    String formattedEthAmount = decimalFormat.format(total / ethToInrRate);
 	    logger.info("Total: {}, ETH-INR Rate: {}, ETH Amount: {}", total, ethToInrRate, formattedEthAmount);
 	    
-	    model.addAttribute("WalletTransactionDto1", new WalletTransactionDto1());
 	    model.addAttribute("cartCount", cartService.getCartCount());
 	    model.addAttribute("total", total);
 	    model.addAttribute("recipientAddress", receiver_metamask_walletAddress);
@@ -117,5 +116,4 @@ public class CartController {
 
 	    return "checkout";
 	}
-
 }

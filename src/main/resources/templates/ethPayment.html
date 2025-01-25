@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <title>Ethereum Payment - Ecommerce Shop</title>
+    <style>
+		.white-box {
+		    background-color: #ffffff; 
+		    border-radius: 8px;       /* Rounded corners */
+		    max-width: 600px;         /* Limit the width of the box */
+		    width: 100%;              /* Make it responsive */
+		}
+    </style>
+</head>
+
+<body>
+	<div class="container-fluid py-5" style="background-color: #f5f5f5; height: 100vh;">
+	    <div class="d-flex justify-content-center align-items-center h-100">
+	        <div class="white-box p-4 shadow-lg rounded">
+				<h3>Ethereum Transaction</h3>
+	            <!-- Form for Ethereum Transaction -->
+				<p id="responseMessage" th:text="${response}" th:if="${response}" style="color: green;"></p>
+				<p id="errorMessage" th:text="${error}" th:if="${error}" style="color: red;"></p>
+				
+	            <form id="ethTransactionForm" th:action="@{/VITproject/perform-transaction}" method="post" th:object="${walletTransactionDto1}" style="margin-top: 10px">
+	                <!-- Sender Wallet Address -->
+	                <div class="form-group">
+	                    <label for="senderAddress">Sender Wallet Address</label>
+	                    <input type="text" class="form-control" id="senderAddress" name="senderAddress" th:field="*{senderAddress}" placeholder="Enter your address" required />
+	                </div>
+
+	                <!-- Sender Private Key -->
+	                <div class="form-group">
+	                    <label for="senderPrivateKey">Sender Private Key</label>
+	                    <input type="text" class="form-control" id="senderPrivateKey" name="senderPrivateKey" th:field="*{senderPrivateKey}" placeholder="Enter your private key" required />
+	                    <small class="form-text text-muted">
+	                        We don't store private keys. Your security is our priority.
+	                    </small>
+	                </div>
+
+	                <!-- Amount Payable (Dynamically loaded with Thymeleaf) -->
+	                <div class="form-group">
+	                    <label for="amountValue">Amount Payable</label>
+	                    <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>
+	                </div>
+
+	            </form>
+				<form id="walletCreationForm" th:action="@{/VITproject/create-wallet}" method="post">
+					<label>Don't have a wallet? 
+						<span>
+							<input type="hidden" name="ethAmount" th:value="${ethAmount}">
+							<button type="submit" form="walletCreationForm" class="btn btn-secondary">Create Wallet</button>
+						</span>
+					</label>
+				</form>
+				<div class="form-group" th:if="${senderWalletAddress}">
+				    <small><span th:text="'Sender Wallet Address: ' + ${senderWalletAddress}"></span></small><br>
+				    <small><span th:text="'Sender Private Key: ' + ${senderPrivateKey}"></span></small><br>
+				    <small style="color">Keep your private key safe</small>
+				</div>
+				
+				<form id="walletBalanceForm" th:action="@{/VITproject/check-wallet-balance}" method="post">
+					<label>Check your wallet's balance 
+						<span>
+							<input type="hidden" name="ethAmount" th:value="${ethAmount}">
+							<span><input type="text" class="form-control" name="senderWalletAddress" placeholder="Enter your address" required />
+							<button type="submit" form="walletBalanceForm" class="btn btn-secondary">Check Balance</button></span>
+						</span>
+					</label>
+				</form>
+				<div class="form-group" th:if="${balance}">
+				    <label><span th:text="'Your Wallet Balance: ' + (${balance} != '' ? ${balance} : '0') + ' ETH'"></span></label>
+				</div>				
+	            <!-- Footer Buttons -->
+	            <div class="footer mt-3">
+	                <button type="submit" form="ethTransactionForm" class="btn btn-primary">Pay in ETH</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+<!-- Modal (pop-up)-->
+<div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">Are you sure you want to leave? Your progress won't be saved</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a id="confirmDelete" href="#" class="btn btn-primary">Yes</a>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<!--<script>
+    let showConfirmation = true; // Flag to determine whether to show modal
+
+    window.onbeforeunload = function (event) {
+        if (showConfirmation) {
+            $('#cancelModal').modal('show'); // Show the modal
+            return false; // Prevent the default back navigation
+        }
+    };
+
+    // When user confirms leaving
+    document.getElementById('confirmDelete').addEventListener('click', function () {
+        showConfirmation = false; // Allow back navigation
+        window.history.back(); // Go back in browser history
+    });
+
+    // Prevent modal from interfering with form submission
+    document.querySelector('form').addEventListener('submit', function () {
+        showConfirmation = false; // Disable confirmation when submitting the form
+    });
+</script>-->
+</body>
+</html>
