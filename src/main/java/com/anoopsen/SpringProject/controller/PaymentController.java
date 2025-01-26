@@ -1,6 +1,7 @@
 package com.anoopsen.SpringProject.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -107,10 +108,12 @@ public class PaymentController {
 	        	return response;
 	        } 
 	        else {
+	        	logger.info("Unable to connect to API with error: {}", response.getBody());
 	        	return new ResponseEntity<>("Internal Server Error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 	        } 
 		}
 		catch(Exception e) {
+			logger.info("Unable to connect to API with error: {}", e.getMessage());
 			return new ResponseEntity<>("Internal Server Error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
 		}   
 	}
@@ -128,6 +131,7 @@ public class PaymentController {
 	    	return "ethPayment";
 	    } 
 	    else {
+	    	logger.info("Unable to connect to API with error: {}", response.getBody());
 	        attr.addFlashAttribute("error", "Redirection to payment failed with status code: " + response.getStatusCode());
 	        return "redirect:/VITproject/checkout";
 	    }
@@ -142,6 +146,7 @@ public class PaymentController {
 	        String senderPrivateKey = "";
 	        
 	        try {
+	        	/*
 		        // Build the request
 		        JSONObject payload = new JSONObject();
 		        payload.put("infura_project_id", infuraProjectId);
@@ -160,17 +165,25 @@ public class PaymentController {
 		        senderWalletAddress = jsonResponse.optString("sender_address", "");
 		        senderPrivateKey = jsonResponse.optString("sender_private_key", "");
 		        
-		        logger.info("Connection successful and received wallet address");
+		        logger.info("Connection successful and received wallet address");*/
+	        	
+	        	//Generating wallet address locally
+	        	List<String> credentials = cryptoService.getWalletCredentials();
+	        	senderWalletAddress = credentials.get(0);
+	        	senderPrivateKey = credentials.get(1);
+	        	
 		    	model.addAttribute("senderWalletAddress", senderWalletAddress);
 		    	model.addAttribute("senderPrivateKey", senderPrivateKey);
 	        }
 	        catch(Exception e) {
+	        	logger.info("Unable to get wallet from API with error: {}", e.getMessage());
 		    	model.addAttribute("error", "Wallet generation failed: " + e.getStackTrace());
 	        }
 	    } 
-	    else 
+	    else {
+	    	logger.info("Unable to connect to API with error: {}", connectionResponse.getStatusCode());
 	    	model.addAttribute("error", "Wallet generation failed due to connection issue with status code: " + connectionResponse.getStatusCode());
-	    
+	    }
 	   	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
     	model.addAttribute("ethAmount", ethAmount);
     	model.addAttribute("receiverAddress", receiver_metamask_walletAddress);

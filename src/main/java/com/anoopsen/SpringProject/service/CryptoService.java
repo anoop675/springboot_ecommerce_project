@@ -10,6 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +34,30 @@ public class CryptoService {
 
     @Autowired
     private RestTemplate restTemplate;
+    
+    public List<String> getWalletCredentials(){
+    	List<String> credentials = new ArrayList<>();
+        try {
+            // Generate ECKeyPair (contains both private and public keys)
+            ECKeyPair keyPair = Keys.createEcKeyPair();
+
+            //String walletAddress = "0x" + Keys.getAddress(keyPair.getPublicKey());
+            String walletAddress = Keys.toChecksumAddress("0x" + Keys.getAddress(keyPair.getPublicKey()));
+
+            String privateKey = "0x" + keyPair.getPrivateKey().toString(16);
+
+            String publicKey = keyPair.getPublicKey().toString(16);
+            
+            credentials.add(walletAddress);
+            credentials.add(privateKey);
+            
+            return credentials;
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public double getEthToInrRate() {
         //String url = apiUrl + "/simple/price?ids=ethereum&vs_currencies=inr";
@@ -54,6 +85,5 @@ public class CryptoService {
             System.err.println("An error occurred: " + e.getMessage());
             return -1; // Fallback value
         }
-    	
     }
 }

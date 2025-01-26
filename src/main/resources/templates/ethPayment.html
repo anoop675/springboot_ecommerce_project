@@ -13,9 +13,39 @@
     <style>
 		.white-box {
 		    background-color: #ffffff; 
-		    border-radius: 8px;       /* Rounded corners */
-		    max-width: 600px;         /* Limit the width of the box */
-		    width: 100%;              /* Make it responsive */
+		    border-radius: 8px;      
+		    max-width: 600px;         
+		    width: 100%;              
+		}
+		.copy-btn {
+		    cursor: pointer;
+		    margin-left: 10px;
+		}
+		.address-box {
+		    display: flex;
+		    justify-content: space-between;
+		    align-items: center;
+		    background-color: #f8f9fa;
+		    padding: 10px;
+		    border-radius: 5px;
+		    font-size: 12px;
+		    word-wrap: break-word;
+		    max-width: 100%;
+		}
+		.address-box input {
+		    border: none;
+		    background-color: transparent;
+		    font-size: 12px;
+		}
+		.input-group {
+		    display: flex;
+		    justify-content: space-between;
+		}
+		.input-group input {
+		    flex: 1;
+		}
+		.input-group button {
+		    margin-left: 10px;
 		}
     </style>
 </head>
@@ -39,17 +69,17 @@
 	                <!-- Sender Private Key -->
 	                <div class="form-group">
 	                    <label for="senderPrivateKey">Sender Private Key</label>
-	                    <input type="text" class="form-control" id="senderPrivateKey" name="senderPrivateKey" th:field="*{senderPrivateKey}" placeholder="Enter your private key" required />
+	                    <input type="password" class="form-control" id="senderPrivateKey" name="senderPrivateKey" th:field="*{senderPrivateKey}" placeholder="Enter your private key" required />
 	                    <small class="form-text text-muted">
 	                        We don't store private keys. Your security is our priority.
 	                    </small>
 	                </div>
 
-	                <!-- Amount Payable (Dynamically loaded with Thymeleaf) -->
-	                <div class="form-group">
-	                    <label for="amountValue">Amount Payable</label>
-	                    <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>
-	                </div>
+					<!-- Amount Payable (Dynamically loaded with Thymeleaf) -->
+					 <div class="form-group d-flex justify-content-between">
+					     <label for="amountValue">Amount Payable</label>
+					     <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>
+					 </div>
 
 	            </form>
 				<form id="walletCreationForm" th:action="@{/VITproject/create-wallet}" method="post">
@@ -61,13 +91,20 @@
 					</label>
 				</form>
 				<div class="form-group" th:if="${senderWalletAddress}">
-				    <small><span th:text="'Sender Wallet Address: ' + ${senderWalletAddress}"></span></small><br>
-				    <small><span th:text="'Sender Private Key: ' + ${senderPrivateKey}"></span></small><br>
-				    <small style="color">Keep your private key safe</small>
+				    <small><strong><span th:text="'Sender Wallet Address: ' + ${senderWalletAddress}"></strong></span></small><br>
+					<input type="hidden" id="senderPrivateKey" name="senderPrivateKey" th:value="${senderPrivateKey}">
+				    <small>
+				        <span><strong>Sender Private Key: </strong></span>
+				        <span id="privateKey" style="letter-spacing: 2px;"><strong>••••••••••••••••••••••••••••••••••</strong></span>
+				    </small><br>
+				    <button type="button" class="btn btn-outline-primary" id="toggleKeyButton" onclick="togglePrivateKey()">
+				        View
+				    </button><br>
+				    <small style="color: red;"><strong>Please keep your private key safe</strong></small>
 				</div>
 				
 				<form id="walletBalanceForm" th:action="@{/VITproject/check-wallet-balance}" method="post">
-					<label>Check your wallet's balance 
+					<label>Check your wallet's balance
 						<span>
 							<input type="hidden" name="ethAmount" th:value="${ethAmount}">
 							<span><input type="text" class="form-control" name="senderWalletAddress" placeholder="Enter your address" required />
@@ -107,8 +144,40 @@
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-<!--<script>
-    let showConfirmation = true; // Flag to determine whether to show modal
+<script>
+	let isKeyVisible = false;
+
+	// Function to toggle private key visibility
+	function togglePrivateKey() {
+	    const privateKeySpan = document.getElementById("privateKey");
+	    const toggleButton = document.getElementById("toggleKeyButton");
+		const privateKey = document.getElementById("senderPrivateKey");
+
+	    if (isKeyVisible) {
+	        // Hide private key
+	        privateKeySpan.textContent = "••••••••••••••••••••••••••••••••••";
+	        toggleButton.textContent = "View";
+	    } else {
+	        // Show private key
+	        privateKeySpan.textContent = privateKey.value;
+	        toggleButton.textContent = "Hide";
+	    }
+
+	    isKeyVisible = !isKeyVisible;
+	}
+
+	// Function to copy text to clipboard
+	function copyToClipboard(elementId) {
+	    var copyText = document.getElementById(elementId);
+	    var range = document.createRange();
+	    range.selectNode(copyText);
+	    window.getSelection().removeAllRanges();  // Clear current selection
+	    window.getSelection().addRange(range);    // Select new range
+	    document.execCommand("copy");             // Copy the selected text to clipboard
+	    window.getSelection().removeAllRanges();  // Deselect the text
+	    alert("Copied to clipboard");
+	}
+    /*let showConfirmation = true; // Flag to determine whether to show modal
 
     window.onbeforeunload = function (event) {
         if (showConfirmation) {
@@ -126,7 +195,7 @@
     // Prevent modal from interfering with form submission
     document.querySelector('form').addEventListener('submit', function () {
         showConfirmation = false; // Disable confirmation when submitting the form
-    });
-</script>-->
+    });*/
+</script>
 </body>
 </html>
