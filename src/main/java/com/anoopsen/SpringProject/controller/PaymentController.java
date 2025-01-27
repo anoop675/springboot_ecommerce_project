@@ -127,7 +127,7 @@ public class PaymentController {
 	        logger.info("Connection successful: {}", jsonResponse.get("message"));
 	        model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
 	    	model.addAttribute("ethAmount", ethAmount);
-	    	model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
+	    	//model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
 	    	return "ethPayment";
 	    } 
 	    else {
@@ -186,7 +186,7 @@ public class PaymentController {
 	    }
 	   	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
     	model.addAttribute("ethAmount", ethAmount);
-    	model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
+    	//model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
 		return "ethPayment";
 	}
 	
@@ -230,17 +230,69 @@ public class PaymentController {
 	           
     	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
     	model.addAttribute("ethAmount", ethAmount);
-    	model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
+    	//model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
 		return "ethPayment";
 	}
 	
 	@PostMapping(value="/perform-transaction")
-	public ResponseEntity<String> performTransaction(@ModelAttribute WalletTransactionDto1 walletTransactionDto1) {
+	public String performTransaction(@ModelAttribute WalletTransactionDto1 walletTransactionDto1, Model model) {
+		ResponseEntity<String> connectionResponse = this.connectToInfura();
 		
-		
-		return ResponseEntity.ok("Transaction is done successfully!");
+	    if (connectionResponse.getStatusCode() != HttpStatus.OK) { 
+	    	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
+        	model.addAttribute("ethAmount", walletTransactionDto1.getEthAmount());
+	    	model.addAttribute("error", "Process failed due to connection issue with status code: " + connectionResponse.getStatusCode());
+	    	return "ethPayment";
+	    }
+	        
+	    try {
+	    	walletTransactionDto1.setSenderAddress(walletTransactionDto1.getSenderAddress().trim());
+		    walletTransactionDto1.setSenderPrivateKey(walletTransactionDto1.getSenderPrivateKey().trim());
+		        
+		    // Build the request
+		    JSONObject payload = new JSONObject();
+		    payload.put("infura_project_id", infuraProjectId);
+		    payload.put("sender_address", walletTransactionDto1.getSenderAddress());
+		    payload.put("private_key", walletTransactionDto1.getSenderPrivateKey());
+		    payload.put("recipient_address", receiver_metamask_walletAddress);
+		    payload.put("eth_amount", walletTransactionDto1.getEthAmount());
+		        
+		    logger.info("eth_amount: {}", walletTransactionDto1.getEthAmount());
+		        
+		    HttpHeaders headers = new HttpHeaders();
+		    headers.setContentType(MediaType.APPLICATION_JSON);
+		        
+		    HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
+		        
+		    // Send request using RestTemplate
+		    RestTemplate restTemplate = new RestTemplate();
+		    String url = EthPaymentApiUrl + "/send_transaction";
+		    ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+		    JSONObject jsonResponse = new JSONObject(response.getBody());
+		        
+		    if(response.getStatusCode() == HttpStatus.BAD_REQUEST || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+		    	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
+		        model.addAttribute("ethAmount", walletTransactionDto1.getEthAmount());
+		        model.addAttribute("error", "Process failed due to the error: "+jsonResponse.optString("message"));
+		        return "ethPayment";
+		    }  
+		    String txHash = jsonResponse.getString("transaction_hash");
+		    int blockNumber = jsonResponse.getInt("block_number");
+		    double updatedBalance = jsonResponse.getDouble("updated_balance");
+		        
+		    logger.info("Payment with status: "+jsonResponse.getString("status"));
+		    logger.info("EthAmount: {}",walletTransactionDto1.getEthAmount());
+		    return orderComplete(txHash, String.valueOf(walletTransactionDto1.getEthAmount()), model);
+	     }
+	     catch(Exception e) {
+	    	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
+	        model.addAttribute("ethAmount", walletTransactionDto1.getEthAmount());
+		    model.addAttribute("error", "Process failed due to error: " + e.getStackTrace());
+		    e.printStackTrace();
+		    return "ethPayment";
+	     } 
 	}
-	
+	/*
 	@PostMapping(value="/recordTransaction")
 	public ResponseEntity<String> recordTransactionAndShow(@RequestBody TransactionReceiptDto txnReceipt) {
 		logger.info("transaction hash: {}\n sender: {}\n recipient: {}\n amount: {}ETH\n",
@@ -251,10 +303,9 @@ public class PaymentController {
 			);
 		
 		return ResponseEntity.ok("transaction is successful by metamask");
-	}
+	}*/
 	
-	@GetMapping(value="/orderConfirm")
-	public String orderComplete(@RequestParam("transactionHash") String txnHash, @RequestParam("total") String total, Model model) {
+	public String orderComplete(String txnHash, String total, Model model) {
 		model.addAttribute("cart", cartService.getAuthenticatedUserCart().getCartProducts());
 		model.addAttribute("total", total);
 		model.addAttribute("txnHash", txnHash);

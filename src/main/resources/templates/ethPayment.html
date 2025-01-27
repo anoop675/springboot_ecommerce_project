@@ -73,12 +73,15 @@
 	                            We don't store private keys. Your security is our priority.
 	                        </small>
 	                    </div>
+						
+						<input type="hidden" class="form-control" id="ethAmount" name="ethAmount" th:field="*{ethAmount}"/>
+
 	                    <div class="form-group d-flex justify-content-between">
 	                        <label for="amountValue">Amount Payable</label>
 	                        <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>
 	                    </div>
 	                    <div class="footer mt-3">
-	                        <button type="submit" class="btn btn-primary">Pay in ETH</button>
+	                        <button type="submit" class="btn btn-primary" onclick="handleClick()">Pay in ETH</button>
 	                    </div>
 	                </form>
 	            </div>
@@ -138,6 +141,22 @@
                 <a id="confirmDelete" href="#" class="btn btn-primary">Yes</a>
             </div>
         </div>
+    </div>
+</div>
+<!-- Modal Structure -->
+<div id="ethPaymentModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="ethPaymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+				<h5>Please wait</h5>
+            </div>
+            <div class="modal-body">
+                Processing Payment and Verification. Please wait...
+            </div>
+            <div class="modal-footer">
+				<h5> </h5>
+            </div>
+        </div> 
     </div>
 </div>
  
@@ -206,6 +225,14 @@
     document.querySelector('form').addEventListener('submit', function () {
         showConfirmation = false; // Disable confirmation when submitting the form
     });*/
+	function handleClick() {
+		$('#ethPaymentModal').modal('show');
+	    
+		setTimeout(() => {
+	        // Submit the form after your logic
+	        document.querySelector('form').submit();
+		}, 500);
+	}
 </script>
 </body>
 </html>

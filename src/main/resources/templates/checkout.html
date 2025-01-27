@@ -166,7 +166,7 @@
                 <div class="card mb-4">
                     <div class="card-body">
 						
-						<input type="hidden" id="total" th:value="${total}" />
+						<!--<input type="hidden" id="total" th:value="${total}" />
 						
                         <h5 class="mb-3">The total amount </h5>
 
@@ -198,7 +198,7 @@
 						</form>
 
 						
-						<div id="or" style="margin-top: 20px">OR</div>
+						<div id="or" style="margin-top: 20px">OR</div>-->
 
 						
 						<ul class="list-group list-group-flush">
@@ -210,6 +210,16 @@
 						          Shipping
 						          <span >0.000000 ETH</span>
 						    </li>
+							<li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+							    <div>
+							        <strong>Total Amount</strong>
+							        <!--<strong>
+							            <p class="mb-0">(including VAT)</p>
+							        </strong>-->
+							    </div>
+							    <!--<span><strong>₹<span th:text="${total}"></span></strong></span>-->
+								<span><strong><span th:text="${ethAmount}"></span> ETH</strong></span>
+							</li>
 							<p>1 ETH =
 								<span><strong>₹<span th:text="${eth_inr_rate}" style="color: green;"></span></strong></span>
 							</p>
@@ -282,7 +292,7 @@
 		setTimeout(() => {
 	        // Submit the form after your logic
 	        document.querySelector('form').submit();
-		}, 2000);
+		}, 1000);
     }
 </script>
 <script>

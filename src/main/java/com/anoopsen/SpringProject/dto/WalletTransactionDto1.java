@@ -10,13 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WalletTransactionDto1 {
 	
-	private String infuraProjectId;
-	
 	@NotBlank(message = "Sender Address is required")
 	private String senderAddress;
 	
 	@NotBlank(message = "Sender Private Key is required")
 	private String senderPrivateKey;
 	
-	private String receiverAddress;
+	private double ethAmount;
 }
