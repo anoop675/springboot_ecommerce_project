@@ -14,7 +14,7 @@
 		.white-box {
 		    background-color: #ffffff; 
 		    border-radius: 8px;      
-		    max-width: 600px;         
+		    max-width: 1000px;         
 		    width: 100%;              
 		}
 		.copy-btn {
@@ -53,71 +53,71 @@
 <body>
 	<div class="container-fluid py-5" style="background-color: #f5f5f5; height: 100vh;">
 	    <div class="d-flex justify-content-center align-items-center h-100">
-	        <div class="white-box p-4 shadow-lg rounded">
-				<h3>Ethereum Transaction</h3>
-	            <!-- Form for Ethereum Transaction -->
-				<p id="responseMessage" th:text="${response}" th:if="${response}" style="color: green;"></p>
-				<p id="errorMessage" th:text="${error}" th:if="${error}" style="color: red;"></p>
-				
-	            <form id="ethTransactionForm" th:action="@{/VITproject/perform-transaction}" method="post" th:object="${walletTransactionDto1}" style="margin-top: 10px">
-	                <!-- Sender Wallet Address -->
-	                <div class="form-group">
-	                    <label for="senderAddress">Sender Wallet Address</label>
-	                    <input type="text" class="form-control" id="senderAddress" name="senderAddress" th:field="*{senderAddress}" placeholder="Enter your address" required />
-	                </div>
+	        <div class="white-box p-4 shadow-lg rounded d-flex flex-row">
+	            <!-- Left Section -->
+	            <div class="left-section pr-3" style="flex: 2; border-right: 1px solid #ddd;">
+	                <h3>Ethereum Transaction</h3>
+	                <p id="responseMessage" th:text="${response}" th:if="${response}" style="color: green;"></p>
+	                <p id="errorMessage" th:text="${error}" th:if="${error}" style="color: red;"></p>
 
-	                <!-- Sender Private Key -->
-	                <div class="form-group">
-	                    <label for="senderPrivateKey">Sender Private Key</label>
-	                    <input type="password" class="form-control" id="senderPrivateKey" name="senderPrivateKey" th:field="*{senderPrivateKey}" placeholder="Enter your private key" required />
-	                    <small class="form-text text-muted">
-	                        We don't store private keys. Your security is our priority.
-	                    </small>
-	                </div>
+	                <!-- Ethereum Transaction Form -->
+	                <form id="ethTransactionForm" th:action="@{/VITproject/perform-transaction}" method="post" th:object="${walletTransactionDto1}" style="margin-top: 10px">
+	                    <div class="form-group">
+	                        <label for="senderAddress">Sender Wallet Address</label>
+	                        <input type="text" class="form-control" id="senderAddress" name="senderAddress" th:field="*{senderAddress}" placeholder="Enter your address" required />
+	                    </div>
+	                    <div class="form-group">
+	                        <label for="senderPrivateKey">Sender Private Key</label>
+	                        <input type="password" class="form-control" id="senderPrivateKey" name="senderPrivateKey" th:field="*{senderPrivateKey}" autocomplete="off" placeholder="Enter your private key" required />
+	                        <small class="form-text text-muted">
+	                            We don't store private keys. Your security is our priority.
+	                        </small>
+	                    </div>
+	                    <div class="form-group d-flex justify-content-between">
+	                        <label for="amountValue">Amount Payable</label>
+	                        <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>
+	                    </div>
+	                    <div class="footer mt-3">
+	                        <button type="submit" class="btn btn-primary">Pay in ETH</button>
+	                    </div>
+	                </form>
+	            </div>
 
-					<!-- Amount Payable (Dynamically loaded with Thymeleaf) -->
-					 <div class="form-group d-flex justify-content-between">
-					     <label for="amountValue">Amount Payable</label>
-					     <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>
-					 </div>
+	            <!-- Right Section -->
+	            <div class="right-section pl-3" style="flex: 3;">
+	                <form id="walletCreationForm" th:action="@{/VITproject/create-wallet}" method="post" style="margin-top: 50px">
+	                    <h5>Create Wallet</h5>
+	                    <input type="hidden" name="ethAmount" th:value="${ethAmount}">
+	                    <button type="submit" form="walletCreationForm" class="btn btn-secondary btn-block mb-3">Create Wallet</button>
+	                </form>
+					<div class="form-group" th:if="${senderWalletAddress}">
+						<small><strong><span th:text="'Sender Wallet Address: ' + ${senderWalletAddress}"></strong></span></small><br>
+						<!--<input type="hidden" id="senderPrivateKey" name="senderPrivateKey" th:value="${senderPrivateKey}">-->
+						<small>
+							<span><strong>Sender Private Key: </strong></span>
+							<span id="privateKey"><strong>••••••••••••••••••••••••••••••••••</strong></span>
+							<!--style="letter-spacing: 2px;"-->
+							</small><br>
+							<button type="button" class="btn btn-outline-primary" id="toggleKeyButton">View</button><br>
+							<small style="color: red;"><strong>Please keep your private key safe</strong></small>
+					</div>
 
-	            </form>
-				<form id="walletCreationForm" th:action="@{/VITproject/create-wallet}" method="post">
-					<label>Don't have a wallet? 
-						<span>
+	                <form id="walletBalanceForm" th:action="@{/VITproject/check-wallet-balance}" method="post">
+	                    <h5>Check Wallet Balance</h5>
+	                    <div class="form-group">
 							<input type="hidden" name="ethAmount" th:value="${ethAmount}">
-							<button type="submit" form="walletCreationForm" class="btn btn-secondary">Create Wallet</button>
-						</span>
-					</label>
-				</form>
-				<div class="form-group" th:if="${senderWalletAddress}">
-				    <small><strong><span th:text="'Sender Wallet Address: ' + ${senderWalletAddress}"></strong></span></small><br>
-					<input type="hidden" id="senderPrivateKey" name="senderPrivateKey" th:value="${senderPrivateKey}">
-				    <small>
-				        <span><strong>Sender Private Key: </strong></span>
-				        <span id="privateKey" style="letter-spacing: 2px;"><strong>••••••••••••••••••••••••••••••••••</strong></span>
-				    </small><br>
-				    <button type="button" class="btn btn-outline-primary" id="toggleKeyButton" onclick="togglePrivateKey()">
-				        View
-				    </button><br>
-				    <small style="color: red;"><strong>Please keep your private key safe</strong></small>
-				</div>
-				
-				<form id="walletBalanceForm" th:action="@{/VITproject/check-wallet-balance}" method="post">
-					<label>Check your wallet's balance
-						<span>
-							<input type="hidden" name="ethAmount" th:value="${ethAmount}">
-							<span><input type="text" class="form-control" name="senderWalletAddress" placeholder="Enter your address" required />
-							<button type="submit" form="walletBalanceForm" class="btn btn-secondary">Check Balance</button></span>
-						</span>
-					</label>
-				</form>
-				<div class="form-group" th:if="${balance}">
-				    <label><span th:text="'Your Wallet Balance: ' + (${balance} != '' ? ${balance} : '0') + ' ETH'"></span></label>
-				</div>				
-	            <!-- Footer Buttons -->
-	            <div class="footer mt-3">
-	                <button type="submit" form="ethTransactionForm" class="btn btn-primary">Pay in ETH</button>
+	                        <input type="text" class="form-control mb-2" name="senderWalletAddress" placeholder="Enter your address" required />
+	                        <button type="submit" form="walletBalanceForm" class="btn btn-secondary btn-block">Check Balance</button>
+	                    </div>
+	                </form>
+
+					<div class="form-group" th:if="${balance}">
+					    <label>
+					        <span th:text="'Your Wallet Balance: '"></span>
+					        <span th:style="'color: green'" th:text="${balance}"></span>
+					        <span th:style="'color: green'" th:text="' ETH'"></span>
+					    </label>
+					</div>
 	            </div>
 	        </div>
 	    </div>
@@ -145,21 +145,31 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <script>
+	// Add the private key and onclick handler dynamically
+	const senderPrivateKey = "[[${senderPrivateKey}]]" 
+	const toggleKeyButton = document.getElementById("toggleKeyButton");
+
+	toggleKeyButton.addEventListener("click", () => {
+	    togglePrivateKey(senderPrivateKey);
+	});
+	
 	let isKeyVisible = false;
 
 	// Function to toggle private key visibility
-	function togglePrivateKey() {
+	function togglePrivateKey(pk) {
 	    const privateKeySpan = document.getElementById("privateKey");
 	    const toggleButton = document.getElementById("toggleKeyButton");
-		const privateKey = document.getElementById("senderPrivateKey");
+		//const privateKey = pk; // Correctly select the hidden input field
 
 	    if (isKeyVisible) {
 	        // Hide private key
-	        privateKeySpan.textContent = "••••••••••••••••••••••••••••••••••";
+	        //privateKeySpan.textContent = "••••••••••••••••••••••••••••••••••";
+			privateKeySpan.innerHTML = "••••••••••••••••••••••••••••••••••";
 	        toggleButton.textContent = "View";
 	    } else {
 	        // Show private key
-	        privateKeySpan.textContent = privateKey.value;
+	        //privateKeySpan.textContent = pk;
+			privateKeySpan.innerHTML = `<strong>${pk}</strong>`;
 	        toggleButton.textContent = "Hide";
 	    }
 

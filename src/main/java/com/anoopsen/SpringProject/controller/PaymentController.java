@@ -182,7 +182,7 @@ public class PaymentController {
 	    } 
 	    else {
 	    	logger.info("Unable to connect to API with error: {}", connectionResponse.getStatusCode());
-	    	model.addAttribute("error", "Wallet generation failed due to connection issue with status code: " + connectionResponse.getStatusCode());
+	    	model.addAttribute("error", "Process failed due to connection issue with status code: " + connectionResponse.getStatusCode());
 	    }
 	   	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
     	model.addAttribute("ethAmount", ethAmount);
@@ -196,12 +196,12 @@ public class PaymentController {
 		
 	    if (connectionResponse.getStatusCode() == HttpStatus.OK) { //if response is 200 OK, direct to Eth payment page
 	        String senderWalletBalance = "";
-	        
+	        String trimmedSenderAddress = senderAddress.trim(); //remove leading and trailing whitespaces
 	        try {
 		        // Build the request
 		        JSONObject payload = new JSONObject();
 		        payload.put("infura_project_id", infuraProjectId);
-		        payload.put("sender_address", senderAddress);
+		        payload.put("sender_address", trimmedSenderAddress);
 		        
 		        HttpHeaders headers = new HttpHeaders();
 		        headers.setContentType(MediaType.APPLICATION_JSON);
@@ -221,12 +221,12 @@ public class PaymentController {
 		    	model.addAttribute("balance", senderWalletBalance);
 	        }
 	        catch(Exception e) {
-		    	model.addAttribute("error", "Wallet generation failed: " + e.getStackTrace());
+		    	model.addAttribute("error", "Process failed due to error: " + e.getStackTrace());
 		    	e.printStackTrace();
 	        }
 	    } 
 	    else 
-	    	model.addAttribute("error", "Wallet generation failed due to connection issue with status code: " + connectionResponse.getStatusCode());
+	    	model.addAttribute("error", "Process failed due to connection issue with status code: " + connectionResponse.getStatusCode());
 	           
     	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
     	model.addAttribute("ethAmount", ethAmount);
