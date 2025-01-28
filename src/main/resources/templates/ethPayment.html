@@ -59,10 +59,12 @@
 	                <h3>Ethereum Transaction</h3>
 	                <p id="responseMessage" th:text="${response}" th:if="${response}" style="color: green;"></p>
 	                <p id="errorMessage" th:text="${error}" th:if="${error}" style="color: red;"></p>
+					
+					<input type="hidden" th:field="*{deliveryAddressDto}"/>
 
 	                <!-- Ethereum Transaction Form -->
-	                <form id="ethTransactionForm" th:action="@{/VITproject/perform-transaction}" method="post" th:object="${walletTransactionDto1}" style="margin-top: 10px">
-	                    <div class="form-group">
+	                <form id="ethTransactionForm" th:action="@{/VITproject/perform-transaction}" method="post" th:object="${walletTransactionDto1}" style="margin-top: 10px">						
+						<div class="form-group">
 	                        <label for="senderAddress">Sender Wallet Address</label>
 	                        <input type="text" class="form-control" id="senderAddress" name="senderAddress" th:field="*{senderAddress}" placeholder="Enter your address" required />
 	                    </div>
@@ -73,8 +75,8 @@
 	                            We don't store private keys. Your security is our priority.
 	                        </small>
 	                    </div>
-						
-						<input type="hidden" class="form-control" id="ethAmount" name="ethAmount" th:field="*{ethAmount}"/>
+
+						<input type="hidden" class="form-control" id="ethAmount" name="ethAmount" th:field="*{ethAmount}" th:value="${ethAmount}" />
 
 	                    <div class="form-group d-flex justify-content-between">
 	                        <label for="amountValue">Amount Payable</label>

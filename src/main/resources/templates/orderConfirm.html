@@ -94,6 +94,18 @@
 							        </div>
 							    </div>
 							</div>
+							<div>
+							    <h5>Delivery Address:</h5>
+							    <p><strong>To:</strong> 
+									<span th:text="${deliveryAddressDto.firstName}"></span>
+									<span th:text="${deliveryAddressDto.lastName}"></span></p>
+								<p><strong>Email:</strong> <span th:text="${deliveryAddressDto.email}"></span></p>
+								<p><strong>Phone:</strong> <span th:text="${deliveryAddressDto.phoneNumber}"></span></p>
+								<p><strong>Street:</strong> <span th:text="${deliveryAddressDto.addressLine1} +, + ${deliveryAddressDto.addressLine2}"></span></p>
+							    <p><strong>City:</strong> <span th:text="${deliveryAddressDto.townCity}"></span></p>
+							    <p><strong>Zip Code:</strong> <span th:text="${deliveryAddressDto.postalCode}"></span></p>
+								<p><strong>Country:</strong> <span th:text="India"></span></p>
+							</div>
                             <hr class="mb-4">
 
                             <p class="text-primary mb-0"><i class="fas fa-info-circle mr-1"></i> Please wait for the update if the order confirmation is delayed.</p>

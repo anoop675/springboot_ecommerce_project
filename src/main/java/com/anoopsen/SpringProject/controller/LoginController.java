@@ -86,6 +86,7 @@ public class LoginController {
 	    }
 	    else if (response.getStatusCode() == HttpStatus.CONFLICT) {
 	        model.addAttribute("errorMessage", "User with this email already exists."); // If there's a conflict (user already exists), show an error message
+	        model.addAttribute("user", user);
 	        return "register";
 	    } 
 	    else {

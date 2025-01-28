@@ -13,11 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.anoopsen.SpringProject.dto.DeliveryAddressDto;
 import com.anoopsen.SpringProject.dto.WalletTransactionDto1;
 import com.anoopsen.SpringProject.model.Cart;
 import com.anoopsen.SpringProject.model.CartProduct;
@@ -113,6 +115,7 @@ public class CartController {
 	    model.addAttribute("recipientAddress", receiver_metamask_walletAddress);
 	    model.addAttribute("eth_inr_rate", ethToInrRate);
 	    model.addAttribute("ethAmount", formattedEthAmount);
+	    model.addAttribute("deliveryAddressDto", new DeliveryAddressDto());
 
 	    return "checkout";
 	}
