@@ -76,8 +76,9 @@
 	                        </small>
 	                    </div>
 
-						<input type="hidden" class="form-control" id="ethAmount" name="ethAmount" th:field="*{ethAmount}" th:value="${ethAmount}" />
-
+						<!--<input type="hidden" class="form-control" id="ethAmount" name="ethAmount" th:field="*{ethAmount}" th:value="${ethAmount}" />-->
+						<input type="hidden" name="ethAmount" th:value="${ethAmount}">
+						
 	                    <div class="form-group d-flex justify-content-between">
 	                        <label for="amountValue">Amount Payable</label>
 	                        <strong><p id="amountValue" th:text="${ethAmount} + ' ETH'"></p></strong>

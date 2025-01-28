@@ -101,7 +101,7 @@
 									<span th:text="${deliveryAddressDto.lastName}"></span></p>
 								<p><strong>Email:</strong> <span th:text="${deliveryAddressDto.email}"></span></p>
 								<p><strong>Phone:</strong> <span th:text="${deliveryAddressDto.phoneNumber}"></span></p>
-								<p><strong>Street:</strong> <span th:text="${deliveryAddressDto.addressLine1} +, + ${deliveryAddressDto.addressLine2}"></span></p>
+								<p><strong>Street:</strong> <span th:text="${deliveryAddressDto.addressLine1} + ${deliveryAddressDto.addressLine2}"></span></p>
 							    <p><strong>City:</strong> <span th:text="${deliveryAddressDto.townCity}"></span></p>
 							    <p><strong>Zip Code:</strong> <span th:text="${deliveryAddressDto.postalCode}"></span></p>
 								<p><strong>Country:</strong> <span th:text="India"></span></p>
@@ -142,6 +142,9 @@
 								</li>
 								<li class="list-group-item border-0 px-0">
 								    <button class="btn btn-outline-success btn-sm" onclick="openEtherscan()">View on Etherscan</button>
+								</li>
+								<li class="list-group-item border-0 px-0">
+								    <strong><a class="btn btn-outline-success btn-sm" th:href="@{/VITproject/shop}">Back to Shop</a></strong>
 								</li>
 				            </ul>
 				        </div>

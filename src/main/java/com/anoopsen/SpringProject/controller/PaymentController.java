@@ -212,7 +212,7 @@ public class PaymentController {
 	    }
 	   	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
 	   	model.addAttribute("deliveryAddressDto", deliveryAddressDto);
-    	model.addAttribute("ethAmount", this.formattedDecimal(walletTransactionDto1.getEthAmount()));
+    	model.addAttribute("ethAmount", ethAmount);
     	//model.addAttribute("receiverAddress", receiver_metamask_walletAddress);
 		return "ethPayment";
 	}
@@ -275,7 +275,7 @@ public class PaymentController {
 	
 	//@ModelAttribute("deliveryAddressDto")
 	@PostMapping(value="/perform-transaction")
-	public String performTransaction(@ModelAttribute("walletTransactionDto1") WalletTransactionDto1 walletTransactionDto1, @ModelAttribute("deliveryAddressDto") DeliveryAddressDto deliveryAddressDto, Model model) {
+	public String performTransaction(@ModelAttribute("walletTransactionDto1") WalletTransactionDto1 walletTransactionDto1, @ModelAttribute("deliveryAddressDto") DeliveryAddressDto deliveryAddressDto, Model model, @RequestParam("ethAmount") String ethAmount) {
 		logger.info(
 				"firstname: "+deliveryAddressDto.getFirstName()
 				+", lastname: "+deliveryAddressDto.getLastName()
@@ -287,12 +287,13 @@ public class PaymentController {
 				+", email: "+deliveryAddressDto.getEmail()
 			);
 		
-		logger.info("eth amount: {}", walletTransactionDto1.getEthAmount());
+		logger.info("eth amount: {}", this.formattedDecimal(walletTransactionDto1.getEthAmount()));
+		logger.info("eth-amount: {}", this.formattedDecimal(Double.parseDouble(ethAmount)));
 		ResponseEntity<String> connectionResponse = this.connectToInfura();
 		
 	    if (connectionResponse.getStatusCode() != HttpStatus.OK) { 
 	    	model.addAttribute("walletTransactionDto1", new WalletTransactionDto1());
-        	model.addAttribute("ethAmount", this.formattedDecimal(walletTransactionDto1.getEthAmount()));
+        	model.addAttribute("ethAmount", this.formattedDecimal(Double.parseDouble(ethAmount)));
 	    	model.addAttribute("error", "Process failed due to connection issue with status code: " + connectionResponse.getStatusCode());
 	    	return "ethPayment";
 	    }
@@ -300,14 +301,14 @@ public class PaymentController {
 	    try {
 	    	walletTransactionDto1.setSenderAddress(walletTransactionDto1.getSenderAddress().trim());
 		    walletTransactionDto1.setSenderPrivateKey(walletTransactionDto1.getSenderPrivateKey().trim());
-		        
+		    walletTransactionDto1.setEthAmount(Double.parseDouble(ethAmount));
 		    // Build the request
 		    JSONObject payload = new JSONObject();
 		    payload.put("infura_project_id", infuraProjectId);
 		    payload.put("sender_address", walletTransactionDto1.getSenderAddress());
 		    payload.put("private_key", walletTransactionDto1.getSenderPrivateKey());
 		    payload.put("recipient_address", receiver_metamask_walletAddress);
-		    payload.put("eth_amount", walletTransactionDto1.getEthAmount());
+		    payload.put("eth_amount", ethAmount);
 		        
 		    logger.info("eth_amount: {}", walletTransactionDto1.getEthAmount());
 		        
@@ -324,7 +325,7 @@ public class PaymentController {
 		        
 		    if(response.getStatusCode() == HttpStatus.BAD_REQUEST || response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
 		    	model.addAttribute("walletTransactionDto1", walletTransactionDto1);
-	        	model.addAttribute("ethAmount", String.valueOf(walletTransactionDto1.getEthAmount()));
+	        	model.addAttribute("ethAmount", ethAmount);
 		        model.addAttribute("error", "Process failed due to: "+jsonResponse.getString("error"));
 		        model.addAttribute("deliveryAddressDto", deliveryAddressDto);
 		        return "ethPayment";
@@ -334,8 +335,8 @@ public class PaymentController {
 		    double updatedBalance = jsonResponse.getDouble("updated_balance");
 		        
 		    logger.info("Payment with status: "+jsonResponse.getString("status"));
-		    logger.info("EthAmount: {}",walletTransactionDto1.getEthAmount());
-		    return orderComplete(deliveryAddressDto, txHash, walletTransactionDto1.getEthAmount(), model);
+		    logger.info("EthAmount: {}",this.formattedDecimal(walletTransactionDto1.getEthAmount()));
+		    return orderComplete(deliveryAddressDto, txHash, String.valueOf(ethAmount), model);
 	     }
 	     catch(Exception e) {
 	    	model.addAttribute("walletTransactionDto1", walletTransactionDto1);
@@ -359,9 +360,9 @@ public class PaymentController {
 		return ResponseEntity.ok("transaction is successful by metamask");
 	}*/
 	@ModelAttribute("deliveryAddressDto")
-	public String orderComplete(DeliveryAddressDto deliveryAddressDto, String txnHash, double total, Model model) {
+	public String orderComplete(DeliveryAddressDto deliveryAddressDto, String txnHash, String total, Model model) {
 		model.addAttribute("cart", cartService.getAuthenticatedUserCart().getCartProducts());
-		model.addAttribute("total", this.formattedDecimal(total));
+		model.addAttribute("total", total);
 		model.addAttribute("txnHash", txnHash);
 		model.addAttribute("deliveryAddressDto", deliveryAddressDto);
 		return "orderConfirm";
