@@ -1,4 +1,4 @@
-//Ethereum Transaction service as Flask app which talks to infura
+#Ethereum Transaction service as Flask app which talks to infura
 
 from flask import Flask, request, jsonify
 from web3 import Web3
