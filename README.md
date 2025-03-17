@@ -1,3 +1,5 @@
+TODO: Integrate Quantum Resistant Ledger(QRL) Zond beta-testnet v1, for Crypto Payments
+
 -> Project Scope:
    * Developing an e-commerce web application with RESTful web services using Spring boot. The application encompasses various        features and services, including product catalog, shopping cart, checkout, etc. 
    * Implementing user authentication and authorization protocols using Spring Security, Open Authorization (OAuth) and JSON web 
